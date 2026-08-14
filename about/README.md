@@ -1,16 +1,18 @@
-# Nombre Apellido
+# GLADYS ARANEDA
 
 ## Perfil
 
-**Disciplina / formación:**  
-**Qué hago hoy:**  
-**Qué me gustaría aprender en este curso:**  
+**Disciplina / formación:**  DISEÑADORA
+
+**Qué hago hoy:**  DOCENTE DE DISEÑO, UNIVERSIDAD AUSTRAL DE CHILE
+
+**Qué me gustaría aprender en este curso:**  VISUALIZACIÓN DE DATOS
 
 ## Intereses
 
-- Tema o disciplina 1
-- Tema o disciplina 2
-- Tema o disciplina 3
+- COMUNICACIÓN MATERIAL
+- ENVASES
+- DOCENCIA
 
 ## Una pregunta que me interesa explorar
 
