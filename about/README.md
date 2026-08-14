@@ -29,6 +29,6 @@ Criterios de diseño para envolventes responsivas y la comunicación del estado 
 
 - [Dispositivos alimentos](https://www.mimicalab.com/)
 
-- [Referencia 2](https://example.com)
+- [Membranas inteligentes](https://noticias.udec.cl/decay-alert-proyecto-nacido-en-la-udec-utiliza-residuos-agricolas-para-alertar-sobre-el-estado-de-los-alimentos/)
 
 > No es necesario publicar información personal que no quieras compartir. Este README será parte de un repositorio público durante el laboratorio.
