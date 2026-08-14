@@ -27,7 +27,7 @@ Criterios de diseño para envolventes responsivas y la comunicación del estado 
 
 ## Links
 
-- [Referencia 1](https://www.mimicalab.com/)
+- [Dispositivos alimentos](https://www.mimicalab.com/)
 
 - [Referencia 2](https://example.com)
 
