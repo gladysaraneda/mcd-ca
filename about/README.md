@@ -16,7 +16,9 @@
 
 ## Una pregunta que me interesa explorar
 
-Escribe una pregunta pequeña que pueda transformarse en reglas, datos, geometría, imágenes o interacción.
+Envolventes responsivas 
+Criterios de diseño para envolventes responsivas y la comunicación del estado interno de productos hidrobiológicos
+
 
 ## Algo que me inspira
 
