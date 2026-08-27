@@ -104,43 +104,52 @@ function generarRepresentacion() {
   }
 }
 
-// Crear la silueta continua y estizada de Chile en 3D
+// Crear la silueta continua y estilizada de Chile en 3D
 function crearSiluetaChileContinua() {
   const formaChile = new THREE.Shape();
-  // Trazado vectorial continuo simulando la silueta alargada de Chile
-  formaChile.moveTo(-0.8, -16);
-  formaChile.lineTo(-1.2, -10);
-  formaChile.lineTo(-0.5, -4);
-  formaChile.lineTo(-1.5, 2);
-  formaChile.lineTo(-0.8, 8);
-  formaChile.lineTo(-0.2, 14);
-  formaChile.lineTo(0.5, 16);
-  formaChile.lineTo(1.2, 12);
-  formaChile.lineTo(0.8, 4);
-  formaChile.lineTo(0.2, -2);
-  formaChile.lineTo(0.6, -10);
-  formaChile.lineTo(0.0, -16);
+  
+  formaChile.moveTo(0.5, -18);
+  formaChile.lineTo(1.2, -15);
+  formaChile.lineTo(1.8, -12);
+  formaChile.lineTo(1.0, -8);
+  formaChile.lineTo(0.5, -4);
+  formaChile.lineTo(0.2, 0);
+  formaChile.lineTo(-0.2, 3);
+  formaChile.lineTo(-0.8, 6);
+  formaChile.lineTo(-1.5, 9);
+  formaChile.lineTo(-2.2, 12);
+  formaChile.lineTo(-1.8, 14);
+  formaChile.lineTo(-2.5, 16);
+  formaChile.lineTo(-1.5, 19);
+  formaChile.lineTo(-0.5, 18.5);
+  formaChile.lineTo(-0.8, 15);
+  formaChile.lineTo(0.0, 11);
+  formaChile.lineTo(-0.3, 7);
+  formaChile.lineTo(0.2, 2);
+  formaChile.lineTo(0.8, -3);
+  formaChile.lineTo(1.2, -9);
+  formaChile.lineTo(0.8, -14);
+  formaChile.lineTo(0.5, -18);
   formaChile.closePath();
 
   const extrudeSettings = {
     steps: 1,
-    depth: 0.4,
+    depth: 0.6,
     bevelEnabled: true,
-    bevelThickness: 0.1,
-    bevelSize: 0.1,
-    bevelSegments: 2
+    bevelThickness: 0.15,
+    bevelSize: 0.15,
   };
 
   const geometriaChile = new THREE.ExtrudeGeometry(formaChile, extrudeSettings);
   const materialChile = new THREE.MeshStandardMaterial({
     color: 0x1e222b,
-    roughness: 0.8,
-    metalness: 0.2
+    roughness: 0.7,
+    metalness: 0.3
   });
 
   const meshChile = new THREE.Mesh(geometriaChile, materialChile);
   meshChile.rotation.x = Math.PI / 2;
-  meshChile.position.y = -0.2;
+  meshChile.position.set(0, -0.4, 0);
   grupoMapaChile.add(meshChile);
 }
 
@@ -185,7 +194,7 @@ function crearModuloCopo(centro) {
   grupoCopo.userData.centro = centro;
   grupo.add(grupoCopo);
 
-  // Nieve animada localizada solo sobre los centros activos y óptimos
+  // Nieve animada localizada solo sobre los centros óptimos
   if (esOptimo) {
     const particulas = crearNieveLocal(centro.x, centro.z);
     sistemasNieveLocal.push(particulas);
