@@ -93,7 +93,6 @@ function calcularPosiciones(centros) {
 function generarRepresentacion() {
   limpiarRepresentacion();
   const distribuidos = calcularPosiciones(centrosEsqui);
-  // Actualizamos el array global con las coordenadas calculadas para que los botones las reconozcan
   centrosEsqui = distribuidos;
 
   centrosEsqui.forEach(crearModuloCopo);
@@ -103,9 +102,9 @@ function generarRepresentacion() {
   }
 }
 
-// Franja territorial orientada de norte a sur de manera recta y vertical
+// Franja territorial larga y estilizada que une todo el territorio de norte a sur
 function crearSiluetaChileContinua() {
-  const geometriaMapa = new THREE.BoxGeometry(0.8, 0.3, 38);
+  const geometriaMapa = new THREE.BoxGeometry(0.6, 0.2, 50);
   const materialMapa = new THREE.MeshStandardMaterial({
     color: 0x1e222b,
     roughness: 0.8,
@@ -113,8 +112,7 @@ function crearSiluetaChileContinua() {
   });
 
   const meshChile = new THREE.Mesh(geometriaMapa, materialMapa);
-  meshChile.rotation.y = 0;
-  meshChile.position.set(0, -0.2, 0);
+  meshChile.position.set(0, -0.2, -2);
   grupoMapaChile.add(meshChile);
 }
 
