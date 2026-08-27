@@ -62,94 +62,59 @@ escena.add(grupoCentros);
 const grupoMapaChile = new THREE.Group();
 escena.add(grupoMapaChile);
 
-function proyectarGeograficamente(centros) {
-  const latitudes = centros.map((c) => c.lat);
-  const longitudes = centros.map((c) => c.lon);
-  const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
-  const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
+function calcularPosiciones(centros) {
+  if (parametros.modo === "geografico") {
+    const latitudes = centros.map((c) => c.lat);
+    const longitudes = centros.map((c) => c.lon);
+    const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
+    const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
 
-  return centros.map((centro) => ({
-    ...centro,
-    x: (centro.lon - lonCentro) * 35,
-    z: -(centro.lat - latCentro) * 22,
-  }));
-}
-
-function ordenarPorNieve(centros) {
-  const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
-  const columnas = 3;
-  const separacion = 5.0;
-  return ordenados.map((centro, indice) => {
-    const columna = indice % columnas;
-    const fila = Math.floor(indice / columnas);
-    return {
+    return centros.map((centro) => ({
       ...centro,
-      x: (columna - columnas / 2 + 0.5) * separacion,
-      z: (fila - 1) * separacion,
-    };
-  });
+      x: (centro.lon - lonCentro) * 35,
+      z: -(centro.lat - latCentro) * 22,
+    }));
+  } else {
+    const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
+    const columnas = 3;
+    const separacion = 5.0;
+    return ordenados.map((centro, indice) => {
+      const columna = indice % columnas;
+      const fila = Math.floor(indice / columnas);
+      return {
+        ...centro,
+        x: (columna - columnas / 2 + 0.5) * separacion,
+        z: (fila - 1) * separacion,
+      };
+    });
+  }
 }
 
 function generarRepresentacion() {
   limpiarRepresentacion();
-  const distribuidos =
-    parametros.modo === "geografico"
-      ? proyectarGeograficamente(centrosEsqui)
-      : ordenarPorNieve(centrosEsqui);
+  const distribuidos = calcularPosiciones(centrosEsqui);
+  // Actualizamos el array global con las coordenadas calculadas para que los botones las reconozcan
+  centrosEsqui = distribuidos;
 
-  distribuidos.forEach(crearModuloCopo);
+  centrosEsqui.forEach(crearModuloCopo);
 
   if (parametros.modo === "geografico") {
     crearSiluetaChileContinua();
   }
 }
 
-// Crear la silueta continua y estilizada de Chile en 3D
+// Franja territorial orientada de norte a sur de manera recta y vertical
 function crearSiluetaChileContinua() {
-  const formaChile = new THREE.Shape();
-  
-  formaChile.moveTo(0.5, -18);
-  formaChile.lineTo(1.2, -15);
-  formaChile.lineTo(1.8, -12);
-  formaChile.lineTo(1.0, -8);
-  formaChile.lineTo(0.5, -4);
-  formaChile.lineTo(0.2, 0);
-  formaChile.lineTo(-0.2, 3);
-  formaChile.lineTo(-0.8, 6);
-  formaChile.lineTo(-1.5, 9);
-  formaChile.lineTo(-2.2, 12);
-  formaChile.lineTo(-1.8, 14);
-  formaChile.lineTo(-2.5, 16);
-  formaChile.lineTo(-1.5, 19);
-  formaChile.lineTo(-0.5, 18.5);
-  formaChile.lineTo(-0.8, 15);
-  formaChile.lineTo(0.0, 11);
-  formaChile.lineTo(-0.3, 7);
-  formaChile.lineTo(0.2, 2);
-  formaChile.lineTo(0.8, -3);
-  formaChile.lineTo(1.2, -9);
-  formaChile.lineTo(0.8, -14);
-  formaChile.lineTo(0.5, -18);
-  formaChile.closePath();
-
-  const extrudeSettings = {
-    steps: 1,
-    depth: 0.6,
-    bevelEnabled: true,
-    bevelThickness: 0.15,
-    bevelSize: 0.15,
-  };
-
-  const geometriaChile = new THREE.ExtrudeGeometry(formaChile, extrudeSettings);
-  const materialChile = new THREE.MeshStandardMaterial({
+  const geometriaMapa = new THREE.BoxGeometry(0.8, 0.3, 38);
+  const materialMapa = new THREE.MeshStandardMaterial({
     color: 0x1e222b,
-    roughness: 0.7,
-    metalness: 0.3
+    roughness: 0.8,
+    metalness: 0.2
   });
 
-  const meshChile = new THREE.Mesh(geometriaChile, materialChile);
-  meshChile.rotation.x = Math.PI / 2;
-  meshChile.position.set(0, -0.4, 0);
+  const meshChile = new THREE.Mesh(geometriaMapa, materialMapa);
+  meshChile.rotation.y = 0;
+  meshChile.position.set(0, -0.2, 0);
   grupoMapaChile.add(meshChile);
 }
 
@@ -331,7 +296,9 @@ function animarCamaraA(nuevaPosicion, nuevoTarget) {
 
 function buscarYSeleccionar(id) {
   const encontrado = centrosEsqui.find(c => c.id === id);
-  if (encontrado) seleccionarCentroEsqui(encontrado);
+  if (encontrado) {
+    seleccionarCentroEsqui(encontrado);
+  }
 }
 
 document.querySelector("#btn-valle").addEventListener("click", () => buscarYSeleccionar("valle-nevado"));
