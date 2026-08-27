@@ -20,7 +20,7 @@ const parametros = { modo: "geografico" };
 let centrosEsqui = datosNieve.centros;
 let objetosCentros = [];
 let centroSeleccionado = null;
-let sistemasNieveLocal = []; // Nieve específica por centro
+let sistemasNieveLocal = [];
 
 const viewport = document.querySelector("#viewport");
 const escena = new THREE.Scene();
@@ -44,7 +44,7 @@ const luzPrincipal = new THREE.DirectionalLight(0xffffff, 2.7);
 luzPrincipal.position.set(18, 28, 14);
 escena.add(luzPrincipal);
 
-// Elemento tooltip HTML flotante para el hover
+// Tooltip flotante para mostrar el nombre al pasar el cursor
 const tooltip = document.createElement("div");
 tooltip.style.position = "absolute";
 tooltip.style.background = "rgba(0, 0, 0, 0.85)";
@@ -59,8 +59,8 @@ document.body.appendChild(tooltip);
 
 const grupoCentros = new THREE.Group();
 escena.add(grupoCentros);
-const grupoMapaCubitos = new THREE.Group();
-escena.add(grupoMapaCubitos);
+const grupoMapaChile = new THREE.Group();
+escena.add(grupoMapaChile);
 
 function proyectarGeograficamente(centros) {
   const latitudes = centros.map((c) => c.lat);
@@ -100,27 +100,48 @@ function generarRepresentacion() {
   distribuidos.forEach(crearModuloCopo);
 
   if (parametros.modo === "geografico") {
-    generarMapaCubitosChile();
+    crearSiluetaChileContinua();
   }
 }
 
-// Generar la silueta de Chile en forma de matriz de cubitos estilo píxel art 3D
-function generarMapaCubitosChile() {
-  const geomCubo = new THREE.BoxGeometry(0.6, 0.6, 0.6);
-  const matCubo = new THREE.MeshStandardMaterial({ color: 0x21252b, roughness: 0.9 });
+// Crear la silueta continua y estizada de Chile en 3D
+function crearSiluetaChileContinua() {
+  const formaChile = new THREE.Shape();
+  // Trazado vectorial continuo simulando la silueta alargada de Chile
+  formaChile.moveTo(-0.8, -16);
+  formaChile.lineTo(-1.2, -10);
+  formaChile.lineTo(-0.5, -4);
+  formaChile.lineTo(-1.5, 2);
+  formaChile.lineTo(-0.8, 8);
+  formaChile.lineTo(-0.2, 14);
+  formaChile.lineTo(0.5, 16);
+  formaChile.lineTo(1.2, 12);
+  formaChile.lineTo(0.8, 4);
+  formaChile.lineTo(0.2, -2);
+  formaChile.lineTo(0.6, -10);
+  formaChile.lineTo(0.0, -16);
+  formaChile.closePath();
 
-  // Trama de cubitos simulando la franja larga y angosta de Chile de norte a sur
-  for (let z = -18; z <= 18; z += 1.2) {
-    // Curva longitudinal simulada para darle la forma característica de Chile
-    let offsetDesplazamientoX = Math.sin(z * 0.15) * 2.5;
-    if (z < -5) offsetDesplazamientoX -= 2; // Zona sur ensanchada
-    
-    for (let xOffset = -1.5; xOffset <= 1.5; xOffset += 1.2) {
-      const cubo = new THREE.Mesh(geomCubo, matCubo);
-      cubo.position.set(offsetDesplazamientoX + xOffset, -0.3, z);
-      grupoMapaCubitos.add(cubo);
-    }
-  }
+  const extrudeSettings = {
+    steps: 1,
+    depth: 0.4,
+    bevelEnabled: true,
+    bevelThickness: 0.1,
+    bevelSize: 0.1,
+    bevelSegments: 2
+  };
+
+  const geometriaChile = new THREE.ExtrudeGeometry(formaChile, extrudeSettings);
+  const materialChile = new THREE.MeshStandardMaterial({
+    color: 0x1e222b,
+    roughness: 0.8,
+    metalness: 0.2
+  });
+
+  const meshChile = new THREE.Mesh(geometriaChile, materialChile);
+  meshChile.rotation.x = Math.PI / 2;
+  meshChile.position.y = -0.2;
+  grupoMapaChile.add(meshChile);
 }
 
 function crearModuloCopo(centro) {
@@ -164,7 +185,7 @@ function crearModuloCopo(centro) {
   grupoCopo.userData.centro = centro;
   grupo.add(grupoCopo);
 
-  // Si el centro está óptimo, agregamos un sistema de partículas de nieve cayendo solo sobre este sector
+  // Nieve animada localizada solo sobre los centros activos y óptimos
   if (esOptimo) {
     const particulas = crearNieveLocal(centro.x, centro.z);
     sistemasNieveLocal.push(particulas);
@@ -176,18 +197,18 @@ function crearModuloCopo(centro) {
 }
 
 function crearNieveLocal(posX, posZ) {
-  const cantidad = 40;
+  const cantidad = 35;
   const geom = new THREE.BufferGeometry();
   const posiciones = new Float32Array(cantidad * 3);
 
   for (let i = 0; i < cantidad * 3; i += 3) {
-    posiciones[i] = posX + (Math.random() - 0.5) * 3;
-    posiciones[i + 1] = Math.random() * 8 + 1;
-    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 3;
+    posiciones[i] = posX + (Math.random() - 0.5) * 2.5;
+    posiciones[i + 1] = Math.random() * 6 + 1;
+    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 2.5;
   }
 
   geom.setAttribute('position', new THREE.BufferAttribute(posiciones, 3));
-  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, transparent: true, opacity: 0.8 });
+  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, transparent: true, opacity: 0.75 });
   return new THREE.Points(geom, mat);
 }
 
@@ -195,8 +216,8 @@ function actualizarNieveLocal() {
   sistemasNieveLocal.forEach(sistema => {
     const pos = sistema.geometry.attributes.position.array;
     for (let i = 1; i < pos.length; i += 3) {
-      pos[i] -= 0.1;
-      if (pos[i] < 0) pos[i] = 9;
+      pos[i] -= 0.08;
+      if (pos[i] < 0) pos[i] = 7;
     }
     sistema.geometry.attributes.position.needsUpdate = true;
   });
@@ -215,18 +236,19 @@ function limpiarRepresentacion() {
     });
     grupoCentros.remove(obj);
   }
-  while (grupoMapaCubitos.children.length > 0) {
-    const obj = grupoMapaCubitos.children[0];
-    if (obj.geometry) obj.geometry.dispose();
-    if (obj.material) obj.material.dispose();
-    grupoMapaCubitos.remove(obj);
+  while (grupoMapaChile.children.length > 0) {
+    const obj = grupoMapaChile.children[0];
+    obj.traverse((hijo) => {
+      if (hijo.geometry) hijo.geometry.dispose();
+      if (hijo.material) hijo.material.dispose();
+    });
+    grupoMapaChile.remove(obj);
   }
 }
 
 const raycaster = new THREE.Raycaster();
 const puntero = new THREE.Vector2();
 
-// Evento Hover para mostrar el nombre del centro de esquí
 renderer.domElement.addEventListener("mousemove", (event) => {
   const rect = renderer.domElement.getBoundingClientRect();
   puntero.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;

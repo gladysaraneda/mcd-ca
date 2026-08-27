@@ -14,24 +14,27 @@
           <p class="eyebrow">COMPUTACIÓN AVANZADA · MCD UAI</p>
           <h1>Estado de Nieve en Chile</h1>
           <p class="subtitle">
-            Monitoreo territorial interactivo: condiciones de nieve, silueta de Chile y partículas de nieve en caída libre.
+            Monitoreo territorial interactivo: silueta de Chile en cubos 3D y partículas de nieve localizada.
           </p>
         </div>
       </header>
 
+      <!-- Lienzo 3D de Three.js -->
       <div id="viewport"></div>
 
       <div class="hint">
-        Click en un centro para acercar · Arrastrar para orbitar · Rueda para zoom
+        Pasa el cursor sobre un centro para ver el nombre · Click para acercar · Rueda para zoom
       </div>
     </section>
 
+    <!-- Panel Lateral de Control y Datos -->
     <aside class="controls-panel">
       <div class="panel-header">
         <p class="eyebrow">CENTRO SELECCIONADO</p>
         <h2 id="estacion-nombre">Selecciona un centro</h2>
       </div>
 
+      <!-- Métricas del centro seleccionado -->
       <section class="control-group">
         <h3>Condiciones Meteorológicas</h3>
         <div style="font-size: 0.95rem; line-height: 1.6;">
@@ -41,7 +44,7 @@
         </div>
       </section>
 
-      <!-- Botones de selección directa ampliados con todos los centros -->
+      <!-- Botones de selección directa con todos los centros del sur -->
       <section class="control-group">
         <h3>Selección Directa de Centros</h3>
         <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 8px; max-height: 180px; overflow-y: auto;">
@@ -54,6 +57,7 @@
         </div>
       </section>
 
+      <!-- Parámetros visuales -->
       <section class="control-group">
         <h3>Reglas de Representación</h3>
         <label>
@@ -67,7 +71,8 @@
 
       <div class="actions">
         <button id="actualizar" style="width: 100%; margin-bottom: 8px; padding: 8px; cursor: pointer;">Recargar Datos</button>
-        <button id="restablecer-vista" class="secondary" style="width: 100%; padding: 8px; cursor: pointer;">Vista General Chile</button>
+        <!-- Botón para regresar el mapa a su estado inicial -->
+        <button id="restablecer-vista" class="secondary" style="width: 100%; padding: 8px; cursor: pointer;">🔄 Restablecer Vista Inicial</button>
       </div>
 
       <footer class="panel-footer" style="margin-top: 15px; font-size: 0.8rem; color: #888;">
