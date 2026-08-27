@@ -69,11 +69,10 @@ function calcularPosiciones(centros) {
     const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
     const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
 
-    // Escala perfecta para que los centros coincidan exactamente con la franja territorial
     return centros.map((centro) => ({
       ...centro,
-      x: (centro.lon - lonCentro) * 15,
-      z: -(centro.lat - latCentro) * 18,
+      x: (centro.lon - lonCentro) * 12,
+      z: -(centro.lat - latCentro) * 16,
     }));
   } else {
     const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
@@ -99,22 +98,62 @@ function generarRepresentacion() {
   centrosEsqui.forEach(crearModuloCopo);
 
   if (parametros.modo === "geografico") {
-    crearRelieveChile3D();
+    crearMapaChilePoligonal();
   }
 }
 
-// Crear una franja territorial 3D estilizada que cruza perfectamente de norte a sur bajo los centros
-function crearRelieveChile3D() {
-  const geometry = new THREE.BoxGeometry(1.2, 0.3, 34);
+// Representación cartográfica poligonal precisa de la silueta de Chile en 3D
+function crearMapaChilePoligonal() {
+  // Puntos de contorno geográfico adaptados a las coordenadas locales de los centros
+  const coordenadasContorno = [
+    new THREE.Vector3(0.5, 0, -16),
+    new THREE.Vector3(1.2, 0, -13),
+    new THREE.Vector3(1.8, 0, -10),
+    new THREE.Vector3(1.0, 0, -6),
+    new THREE.Vector3(0.6, 0, -3),
+    new THREE.Vector3(0.2, 0, 0),    // Zona central norte
+    new THREE.Vector3(-0.4, 0, 3),   // Región Metropolitana / Valparaíso
+    new THREE.Vector3(-1.2, 0, 7),   // Maule / Biobío
+    new THREE.Vector3(-2.0, 0, 11),  // Araucanía / Los Ríos (Pucón)
+    new THREE.Vector3(-2.5, 0, 14),  // Los Lagos (Osorno / Antillanca)
+    new THREE.Vector3(-1.8, 0, 16),
+    new THREE.Vector3(-0.8, 0, 14),
+    new THREE.Vector3(0.0, 0, 10),
+    new THREE.Vector3(0.4, 0, 5),
+    new THREE.Vector3(0.8, 0, 0),
+    new THREE.Vector3(1.2, 0, -5),
+    new THREE.Vector3(0.8, 0, -11),
+    new THREE.Vector3(0.5, 0, -16)   // Cierre del polígono
+  ];
+
+  const shape = new THREE.Shape(coordenadasContorno.map(p => new THREE.Vector2(p.x, p.z)));
+  
+  const extrudeSettings = {
+    steps: 1,
+    depth: 0.4,
+    bevelEnabled: true,
+    bevelThickness: 0.1,
+    bevelSize: 0.1,
+  };
+
+  const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
   const material = new THREE.MeshStandardMaterial({
     color: 0x16181d,
     roughness: 0.8,
     metalness: 0.2
   });
 
-  const meshChile = new THREE.Mesh(geometry, material);
-  meshChile.position.set(0, -0.2, 1); // Posicionado milimétricamente bajo los puntos
-  grupoMapaChile.add(meshChile);
+  const meshMapa = new THREE.Mesh(geometry, material);
+  meshMapa.rotation.x = Math.PI / 2; // Acostar el mapa en el plano horizontal XZ
+  meshMapa.position.set(0, -0.25, 0);
+  grupoMapaChile.add(meshMapa);
+
+  // Línea de borde brillante estilo interfaz cartográfica
+  const geomLinea = new THREE.BufferGeometry().setFromPoints(coordenadasContorno);
+  const matLinea = new THREE.LineBasicMaterial({ color: 0x61afef, linewidth: 2 });
+  const lineaBorde = new THREE.Line(geomLinea, matLinea);
+  lineaBorde.position.y = 0.21;
+  grupoMapaChile.add(lineaBorde);
 }
 
 function crearModuloCopo(centro) {
