@@ -27,7 +27,7 @@ const escena = new THREE.Scene();
 escena.background = new THREE.Color(0x0b0b0c);
 
 const camara = new THREE.PerspectiveCamera(42, viewport.clientWidth / viewport.clientHeight, 0.1, 300);
-camara.position.set(0, 22, 18);
+camara.position.set(0, 35, 25);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -44,7 +44,16 @@ const luzPrincipal = new THREE.DirectionalLight(0xffffff, 2.7);
 luzPrincipal.position.set(18, 28, 14);
 escena.add(luzPrincipal);
 
-// Tooltip flotante para mostrar el nombre al pasar el cursor
+// Plano base gris elegante y proporcionado
+const suelo = new THREE.Mesh(
+  new THREE.PlaneGeometry(16, 28),
+  new THREE.MeshStandardMaterial({ color: 0x16181d, roughness: 0.9 })
+);
+suelo.rotation.x = -Math.PI / 2;
+suelo.position.y = -0.05;
+escena.add(suelo);
+
+// Tooltip flotante
 const tooltip = document.createElement("div");
 tooltip.style.position = "absolute";
 tooltip.style.background = "rgba(0, 0, 0, 0.85)";
@@ -59,30 +68,23 @@ document.body.appendChild(tooltip);
 
 const grupoCentros = new THREE.Group();
 escena.add(grupoCentros);
-const grupoMapaChile = new THREE.Group();
-escena.add(grupoMapaChile);
 
 function calcularPosiciones(centros) {
   if (parametros.modo === "geografico") {
-    return centros.map((centro) => {
-      let x = 0, z = 0;
-      switch(centro.id) {
-        case "portillo": x = -0.15; z = -2.0; break;
-        case "valle-nevado": x = 0.15; z = -1.1; break;
-        case "el-colorado": x = 0.3; z = -0.9; break;
-        case "la-parva": x = 0.45; z = -0.7; break;
-        case "nevados-chillan": x = -0.25; z = 1.0; break;
-        case "corralco": x = -0.4; z = 1.9; break;
-        case "pucon": x = -0.65; z = 2.8; break;
-        case "antillanca": x = -0.9; z = 3.6; break;
-        case "volcan-osorno": x = -1.1; z = 4.2; break;
-      }
-      return { ...centro, x, z };
-    });
+    const latitudes = centros.map((c) => c.lat);
+    const longitudes = centros.map((c) => c.lon);
+    const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
+    const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
+
+    return centros.map((centro) => ({
+      ...centro,
+      x: (centro.lon - lonCentro) * 12,
+      z: -(centro.lat - latCentro) * 10,
+    }));
   } else {
     const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
     const columnas = 3;
-    const separacion = 2.0;
+    const separacion = 4.0;
     return ordenados.map((centro, indice) => {
       const columna = indice % columnas;
       const fila = Math.floor(indice / columnas);
@@ -99,44 +101,7 @@ function generarRepresentacion() {
   limpiarRepresentacion();
   const distribuidos = calcularPosiciones(centrosEsqui);
   centrosEsqui = distribuidos;
-
   centrosEsqui.forEach(crearModuloCopo);
-
-  if (parametros.modo === "geografico") {
-    crearMapaChileCubosPixelados();
-  }
-}
-
-// Mapa pixelado de Chile en cubos blancos pequeños y detallados
-function crearMapaChileCubosPixelados() {
-  const geomCubo = new THREE.BoxGeometry(0.18, 0.12, 0.18);
-  const matCubo = new THREE.MeshStandardMaterial({
-    color: 0xdddddd,
-    roughness: 0.5,
-    metalness: 0.1
-  });
-
-  // Matriz densa de cubos pequeños (estilo pixel art 3D) formando la silueta alargada de Chile
-  const offsetsChile = [];
-  for (let z = -5.0; z <= 5.5; z += 0.22) {
-    // Curvatura longitudinal característica de Chile
-    let centroX = Math.sin(z * 0.4) * 0.4 - 0.1;
-    if (z > 2.5) centroX -= (z - 2.5) * 0.2; // Desviación hacia la Patagonia sur
-    
-    // Ancho variable de norte a sur
-    let ancho = 0.35;
-    if (z > 3.0) ancho = 0.55;
-
-    for (let x = centroX - ancho; x <= centroX + ancho; x += 0.2) {
-      offsetsChile.push({ x: x, z: z });
-    }
-  }
-
-  offsetsChile.forEach(pos => {
-    const cubo = new THREE.Mesh(geomCubo, matCubo);
-    cubo.position.set(pos.x, 0, pos.z);
-    grupoMapaChile.add(cubo);
-  });
 }
 
 function crearModuloCopo(centro) {
@@ -147,15 +112,15 @@ function crearModuloCopo(centro) {
   const esOptimo = centro.estado === "optimo";
   const colorCopo = esOptimo ? 0x61afef : 0xe06c75;
 
-  const geoBase = new THREE.CylinderGeometry(0.1, 0.1, 0.04, 16);
+  const geoBase = new THREE.CylinderGeometry(0.5, 0.5, 0.15, 16);
   const matBase = new THREE.MeshStandardMaterial({ color: 0xe06c75, roughness: 0.4 });
   const base = new THREE.Mesh(geoBase, matBase);
-  base.position.y = 0.04;
+  base.position.y = 0.08;
   base.userData.centro = centro;
   grupo.add(base);
 
   const grupoCopo = new THREE.Group();
-  grupoCopo.position.y = 0.22;
+  grupoCopo.position.y = 0.9;
 
   const matCopo = new THREE.MeshStandardMaterial({
     color: colorCopo,
@@ -164,19 +129,19 @@ function crearModuloCopo(centro) {
     emissiveIntensity: 0.4,
   });
 
-  const geoHex = new THREE.BoxGeometry(0.1, 0.03, 0.1);
+  const geoHex = new THREE.BoxGeometry(0.5, 0.15, 0.5);
   const hex = new THREE.Mesh(geoHex, matCopo);
   grupoCopo.add(hex);
 
   for (let i = 0; i < 3; i++) {
-    const brazoGeo = new THREE.BoxGeometry(0.35, 0.025, 0.05);
+    const brazoGeo = new THREE.BoxGeometry(1.8, 0.12, 0.25);
     const brazo = new THREE.Mesh(brazoGeo, matCopo);
     brazo.rotation.y = (i * Math.PI) / 3;
     grupoCopo.add(brazo);
   }
 
-  const factorEscala = Math.max(0.6, centro.cm_nieve / 100);
-  grupoCopo.scale.set(factorEscala, factorEscala, factorEscala);
+  const escalaNieve = Math.max(0.6, centro.cm_nieve / 40);
+  grupoCopo.scale.set(escalaNieve, escalaNieve, escalaNieve);
   grupoCopo.userData.centro = centro;
   grupo.add(grupoCopo);
 
@@ -191,18 +156,18 @@ function crearModuloCopo(centro) {
 }
 
 function crearNieveLocal(posX, posZ) {
-  const cantidad = 10;
+  const cantidad = 25;
   const geom = new THREE.BufferGeometry();
   const posiciones = new Float32Array(cantidad * 3);
 
   for (let i = 0; i < cantidad * 3; i += 3) {
-    posiciones[i] = posX + (Math.random() - 0.5) * 0.25;
-    posiciones[i + 1] = Math.random() * 0.9 + 0.2;
-    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 0.25;
+    posiciones[i] = posX + (Math.random() - 0.5) * 1.5;
+    posiciones[i + 1] = Math.random() * 4 + 1;
+    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 1.5;
   }
 
   geom.setAttribute('position', new THREE.BufferAttribute(posiciones, 3));
-  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.06, transparent: true, opacity: 0.8 });
+  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2, transparent: true, opacity: 0.75 });
   return new THREE.Points(geom, mat);
 }
 
@@ -210,8 +175,8 @@ function actualizarNieveLocal() {
   sistemasNieveLocal.forEach(sistema => {
     const pos = sistema.geometry.attributes.position.array;
     for (let i = 1; i < pos.length; i += 3) {
-      pos[i] -= 0.03;
-      if (pos[i] < 0) pos[i] = 1.1;
+      pos[i] -= 0.06;
+      if (pos[i] < 0) pos[i] = 5;
     }
     sistema.geometry.attributes.position.needsUpdate = true;
   });
@@ -229,14 +194,6 @@ function limpiarRepresentacion() {
       if (hijo.material) hijo.material.dispose();
     });
     grupoCentros.remove(obj);
-  }
-  while (grupoMapaChile.children.length > 0) {
-    const obj = grupoMapaChile.children[0];
-    obj.traverse((hijo) => {
-      if (hijo.geometry) hijo.geometry.dispose();
-      if (hijo.material) hijo.material.dispose();
-    });
-    grupoMapaChile.remove(obj);
   }
 }
 
@@ -295,7 +252,7 @@ function seleccionarCentroEsqui(centro) {
   document.querySelector("#m-temp").textContent = centro.temperatura;
   document.querySelector("#m-nieve").textContent = centro.cm_nieve;
 
-  animarCamaraA({ x: centro.x, y: 1.2, z: centro.z + 1.2 }, { x: centro.x, y: 0, z: centro.z });
+  animarCamaraA({ x: centro.x, y: 5, z: centro.z + 4 }, { x: centro.x, y: 1, z: centro.z });
 }
 
 function animarCamaraA(nuevaPosicion, nuevoTarget) {
@@ -336,7 +293,7 @@ document.querySelector("#modo-distribucion").addEventListener("change", (event) 
 document.querySelector("#actualizar").addEventListener("click", () => generarRepresentacion());
 
 document.querySelector("#restablecer-vista").addEventListener("click", () => {
-  animarCamaraA({ x: 0, y: 22, z: 18 }, { x: 0, y: 0, z: 0 });
+  animarCamaraA({ x: 0, y: 35, z: 25 }, { x: 0, y: 0, z: 0 });
   document.querySelector("#estacion-nombre").textContent = "Selecciona un centro";
   document.querySelector("#m-estado").textContent = "--";
   document.querySelector("#m-temp").textContent = "--";
