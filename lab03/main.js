@@ -1,13 +1,25 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-const URL_RESPALDO = "./assets/data/ski-respaldo.json";
+// DATOS DIRECTOS (Evita problemas de rutas con fetch)
+const datosNieve = {
+  "actualizado": "2026-08-27T16:00:00-04:00",
+  "centros": [
+    { "id": "valle-nevado", "nombre": "Valle Nevado", "lat": -33.3567, "lon": -70.2528, "estado": "optimo", "temperatura": -2, "cm_nieve": 45 },
+    { "id": "el-colorado", "nombre": "El Colorado", "lat": -33.3444, "lon": -70.2889, "estado": "optimo", "temperatura": -3, "cm_nieve": 40 },
+    { "id": "la-parva", "nombre": "La Parva", "lat": -33.3333, "lon": -70.2833, "estado": "cerrado", "temperatura": 1, "cm_nieve": 10 },
+    { "id": "portillo", "nombre": "Portillo", "lat": -32.8361, "lon": -70.1389, "estado": "optimo", "temperatura": -4, "cm_nieve": 60 },
+    { "id": "nevados-chillan", "nombre": "Nevados de Chillán", "lat": -36.9083, "lon": -71.4083, "estado": "optimo", "temperatura": -1, "cm_nieve": 80 },
+    { "id": "corralco", "nombre": "Corralco", "lat": -38.4236, "lon": -71.5644, "estado": "cerrado", "temperatura": 2, "cm_nieve": 15 },
+    { "id": "antillanca", "nombre": "Antillanca", "lat": -40.7667, "lon": -72.1833, "estado": "optimo", "temperatura": -2, "cm_nieve": 50 }
+  ]
+};
 
 const parametros = {
   modo: "geografico",
 };
 
-let centrosEsqui = [];
+let centrosEsqui = datosNieve.centros;
 let objetosCentros = [];
 let centroSeleccionado = null;
 
@@ -21,7 +33,7 @@ const camara = new THREE.PerspectiveCamera(
   0.1,
   300
 );
-camara.position.set(0, 35, 30);
+camara.position.set(0, 50, 40);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -50,23 +62,6 @@ escena.add(suelo);
 const grupoCentros = new THREE.Group();
 escena.add(grupoCentros);
 
-async function cargarDatosNieve() {
-  try {
-    const respuesta = await fetch(URL_RESPALDO, { cache: "no-store" });
-    if (!respuesta.ok) throw new Error("No se pudo cargar el respaldo.");
-    
-    const datos = await respuesta.json();
-    centrosEsqui = datos.centros;
-    
-    document.querySelector("#fuente-label").textContent = "Dataset local · Esquí";
-    document.querySelector("#actualizacion-label").textContent = "activo";
-
-    generarRepresentacion();
-  } catch (error) {
-    console.error("Error cargando datos:", error);
-  }
-}
-
 function proyectarGeograficamente(centros) {
   const latitudes = centros.map((c) => c.lat);
   const longitudes = centros.map((c) => c.lon);
@@ -75,15 +70,15 @@ function proyectarGeograficamente(centros) {
 
   return centros.map((centro) => ({
     ...centro,
-    x: (centro.lon - lonCentro) * 120,
-    z: -(centro.lat - latCentro) * 40,
+    x: (centro.lon - lonCentro) * 300,
+    z: -(centro.lat - latCentro) * 150,
   }));
 }
 
 function ordenarPorNieve(centros) {
   const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
   const columnas = 3;
-  const separacion = 4.0;
+  const separacion = 6.0;
 
   return ordenados.map((centro, indice) => {
     const columna = indice % columnas;
@@ -114,35 +109,35 @@ function crearModuloCopo(centro) {
   const esOptimo = centro.estado === "optimo";
   const colorCopo = esOptimo ? 0x61afef : 0xe06c75;
 
-  const geoBase = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 16);
+  const geoBase = new THREE.CylinderGeometry(0.8, 0.8, 0.3, 16);
   const matBase = new THREE.MeshStandardMaterial({ color: 0xe06c75, roughness: 0.4 });
   const base = new THREE.Mesh(geoBase, matBase);
-  base.position.y = 0.1;
+  base.position.y = 0.15;
   base.userData.centro = centro;
   grupo.add(base);
 
   const grupoCopo = new THREE.Group();
-  grupoCopo.position.y = 1.2;
+  grupoCopo.position.y = 1.5;
 
   const matCopo = new THREE.MeshStandardMaterial({
     color: colorCopo,
     roughness: 0.3,
     emissive: colorCopo,
-    emissiveIntensity: 0.3,
+    emissiveIntensity: 0.4,
   });
 
-  const geoHex = new THREE.BoxGeometry(0.6, 0.2, 0.6);
+  const geoHex = new THREE.BoxGeometry(0.8, 0.3, 0.8);
   const hex = new THREE.Mesh(geoHex, matCopo);
   grupoCopo.add(hex);
 
   for (let i = 0; i < 3; i++) {
-    const brazoGeo = new THREE.BoxGeometry(2.2, 0.15, 0.3);
+    const brazoGeo = new THREE.BoxGeometry(3.0, 0.2, 0.4);
     const brazo = new THREE.Mesh(brazoGeo, matCopo);
     brazo.rotation.y = (i * Math.PI) / 3;
     grupoCopo.add(brazo);
   }
 
-  const escalaNieve = Math.max(0.6, centro.cm_nieve / 40);
+  const escalaNieve = Math.max(0.7, centro.cm_nieve / 35);
   grupoCopo.scale.set(escalaNieve, escalaNieve, escalaNieve);
   grupoCopo.userData.centro = centro;
   grupo.add(grupoCopo);
@@ -175,7 +170,7 @@ renderer.domElement.addEventListener("pointerdown", (event) => {
   const intersecciones = raycaster.intersectObjects(objetosCentros, true);
 
   if (intersecciones.length > 0) {
-    let objetoEncontrado = intersecciones[0].object;
+    let objetoEncontrado = intersecciones.object;
     while (objetoEncontrado.parent && !objetoEncontrado.userData.centro) {
       objetoEncontrado = objetoEncontrado.parent;
     }
@@ -192,7 +187,7 @@ function seleccionarCentroEsqui(centro) {
   document.querySelector("#m-temp").textContent = centro.temperatura;
   document.querySelector("#m-nieve").textContent = centro.cm_nieve;
 
-  animarCamaraA({ x: centro.x, y: 6, z: centro.z + 5 }, { x: centro.x, y: 1, z: centro.z });
+  animarCamaraA({ x: centro.x, y: 8, z: centro.z + 6 }, { x: centro.x, y: 1, z: centro.z });
 }
 
 function animarCamaraA(nuevaPosicion, nuevoTarget) {
@@ -211,7 +206,6 @@ function animarCamaraA(nuevaPosicion, nuevoTarget) {
   pasoAnimacion();
 }
 
-// Botones de selección directa por ID del centro
 function buscarYSeleccionar(id) {
   const encontrado = centrosEsqui.find(c => c.id === id);
   if (encontrado) seleccionarCentroEsqui(encontrado);
@@ -226,10 +220,10 @@ document.querySelector("#modo-distribucion").addEventListener("change", (event) 
   generarRepresentacion();
 });
 
-document.querySelector("#actualizar").addEventListener("click", () => cargarDatosNieve());
+document.querySelector("#actualizar").addEventListener("click", () => generarRepresentacion());
 
 document.querySelector("#restablecer-vista").addEventListener("click", () => {
-  animarCamaraA({ x: 0, y: 35, z: 30 }, { x: 0, y: 0, z: 0 });
+  animarCamaraA({ x: 0, y: 50, z: 40 }, { x: 0, y: 0, z: 0 });
   document.querySelector("#estacion-nombre").textContent = "Selecciona un centro";
   document.querySelector("#m-estado").textContent = "--";
   document.querySelector("#m-temp").textContent = "--";
@@ -250,5 +244,6 @@ window.addEventListener("resize", () => {
   renderer.setSize(ancho, altura);
 });
 
-cargarDatosNieve();
+// Inicialización directa
+generarRepresentacion();
 animar();
