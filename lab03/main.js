@@ -1,25 +1,15 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-// ======================================================
-// 01 — CONFIGURACIÓN Y DATOS DE CENTROS DE ESQUÍ
-// ======================================================
-
 const URL_RESPALDO = "./assets/data/ski-respaldo.json";
 
 const parametros = {
   modo: "geografico",
-  escalaAltura: 0.1,
-  escalaAncho: 0.8,
 };
 
 let centrosEsqui = [];
 let objetosCentros = [];
 let centroSeleccionado = null;
-
-// ======================================================
-// 02 — ESCENA Y CÁMARA
-// ======================================================
 
 const viewport = document.querySelector("#viewport");
 const escena = new THREE.Scene();
@@ -36,7 +26,6 @@ camara.position.set(0, 35, 30);
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(viewport.clientWidth, viewport.clientHeight);
-renderer.shadowMap.enabled = true;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 viewport.appendChild(renderer.domElement);
 
@@ -48,7 +37,6 @@ escena.add(new THREE.HemisphereLight(0xffffff, 0x1f2228, 1.8));
 
 const luzPrincipal = new THREE.DirectionalLight(0xffffff, 2.7);
 luzPrincipal.position.set(18, 28, 14);
-luzPrincipal.castShadow = true;
 escena.add(luzPrincipal);
 
 const suelo = new THREE.Mesh(
@@ -57,49 +45,38 @@ const suelo = new THREE.Mesh(
 );
 suelo.rotation.x = -Math.PI / 2;
 suelo.position.y = -0.05;
-suelo.receiveShadow = true;
 escena.add(suelo);
 
 const grupoCentros = new THREE.Group();
 escena.add(grupoCentros);
 
-// ======================================================
-// 03 — CARGA DE DATOS LOCALES
-// ======================================================
-
 async function cargarDatosNieve() {
   try {
     const respuesta = await fetch(URL_RESPALDO, { cache: "no-store" });
-    if (!respuesta.ok) throw new Error("No se pudo cargar el archivo de respaldo.");
+    if (!respuesta.ok) throw new Error("No se pudo cargar el respaldo.");
     
     const datos = await respuesta.json();
     centrosEsqui = datos.centros;
     
-    document.querySelector("#fuente-label").textContent = "Dataset local · Esquí Chile";
+    document.querySelector("#fuente-label").textContent = "Dataset local · Esquí";
     document.querySelector("#actualizacion-label").textContent = "activo";
 
     generarRepresentacion();
   } catch (error) {
-    console.error("Error al cargar los datos de nieve:", error);
+    console.error("Error cargando datos:", error);
   }
 }
 
-// ======================================================
-// 04 — REGLAS DE REPRESENTACIÓN (MAPPINGS)
-// ======================================================
-
 function proyectarGeograficamente(centros) {
-  // Mapping 1: Posición espacial basada en latitud y longitud simulando el territorio chileno
   const latitudes = centros.map((c) => c.lat);
   const longitudes = centros.map((c) => c.lon);
-
   const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
   const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
 
   return centros.map((centro) => ({
     ...centro,
-    x: (centro.lon - lonCentro) * 120, // Eje X territorial
-    z: -(centro.lat - latCentro) * 40,  // Eje Z longitudinal (norte-sur)
+    x: (centro.lon - lonCentro) * 120,
+    z: -(centro.lat - latCentro) * 40,
   }));
 }
 
@@ -121,7 +98,6 @@ function ordenarPorNieve(centros) {
 
 function generarRepresentacion() {
   limpiarRepresentacion();
-
   const distribuidos =
     parametros.modo === "geografico"
       ? proyectarGeograficamente(centrosEsqui)
@@ -130,20 +106,14 @@ function generarRepresentacion() {
   distribuidos.forEach(crearModuloCopo);
 }
 
-// ======================================================
-// 05 — GEOMETRÍA DEL COPO DE NIEVE (OUTPUT VISUAL)
-// ======================================================
-
 function crearModuloCopo(centro) {
   const grupo = new THREE.Group();
   grupo.position.set(centro.x, 0, centro.z);
   grupo.userData.centro = centro;
 
-  // Mapping 2: El color cambia según el estado de la nieve (Celeste si es óptimo, Rojo si está cerrado)
   const esOptimo = centro.estado === "optimo";
-  const colorCopo = esOptimo ? 0x61afef : 0xe06c75; // Celeste brillante / Rojo alerta
+  const colorCopo = esOptimo ? 0x61afef : 0xe06c75;
 
-  // Base o soporte del punto en el mapa (color rojo base como pediste)
   const geoBase = new THREE.CylinderGeometry(0.4, 0.4, 0.2, 16);
   const matBase = new THREE.MeshStandardMaterial({ color: 0xe06c75, roughness: 0.4 });
   const base = new THREE.Mesh(geoBase, matBase);
@@ -151,7 +121,6 @@ function crearModuloCopo(centro) {
   base.userData.centro = centro;
   grupo.add(base);
 
-  // Geometría del Copo de Nieve (agrupando pequeñas barras que simulan los cristales de nieve)
   const grupoCopo = new THREE.Group();
   grupoCopo.position.y = 1.2;
 
@@ -162,12 +131,10 @@ function crearModuloCopo(centro) {
     emissiveIntensity: 0.3,
   });
 
-  // Centro hexagonal del copo
   const geoHex = new THREE.BoxGeometry(0.6, 0.2, 0.6);
   const hex = new THREE.Mesh(geoHex, matCopo);
   grupoCopo.add(hex);
 
-  // Brazos del copo de nieve
   for (let i = 0; i < 3; i++) {
     const brazoGeo = new THREE.BoxGeometry(2.2, 0.15, 0.3);
     const brazo = new THREE.Mesh(brazoGeo, matCopo);
@@ -175,10 +142,8 @@ function crearModuloCopo(centro) {
     grupoCopo.add(brazo);
   }
 
-  // Escalar el copo según la cantidad de centímetros de nieve acumulada
   const escalaNieve = Math.max(0.6, centro.cm_nieve / 40);
   grupoCopo.scale.set(escalaNieve, escalaNieve, escalaNieve);
-  
   grupoCopo.userData.centro = centro;
   grupo.add(grupoCopo);
 
@@ -198,10 +163,6 @@ function limpiarRepresentacion() {
   }
 }
 
-// ======================================================
-// 06 — INTERACCIÓN Y ZOOM FOCALIZADO (MAPPING 3)
-// ======================================================
-
 const raycaster = new THREE.Raycaster();
 const puntero = new THREE.Vector2();
 
@@ -218,7 +179,6 @@ renderer.domElement.addEventListener("pointerdown", (event) => {
     while (objetoEncontrado.parent && !objetoEncontrado.userData.centro) {
       objetoEncontrado = objetoEncontrado.parent;
     }
-
     if (objetoEncontrado.userData.centro) {
       seleccionarCentroEsqui(objetoEncontrado.userData.centro);
     }
@@ -227,18 +187,12 @@ renderer.domElement.addEventListener("pointerdown", (event) => {
 
 function seleccionarCentroEsqui(centro) {
   centroSeleccionado = centro;
-
-  // Actualizar panel lateral de lectura de datos
   document.querySelector("#estacion-nombre").textContent = centro.nombre;
   document.querySelector("#m-estado").textContent = centro.estado.toUpperCase();
   document.querySelector("#m-temp").textContent = centro.temperatura;
   document.querySelector("#m-nieve").textContent = centro.cm_nieve;
 
-  // Mapping 3: Acercar la cámara de forma suave hacia el centro seleccionado
-  const targetX = centro.x;
-  const targetZ = centro.z;
-
-  animarCamaraA({ x: targetX, y: 6, z: targetZ + 5 }, { x: targetX, y: 1, z: targetZ });
+  animarCamaraA({ x: centro.x, y: 6, z: centro.z + 5 }, { x: centro.x, y: 1, z: centro.z });
 }
 
 function animarCamaraA(nuevaPosicion, nuevoTarget) {
@@ -249,27 +203,30 @@ function animarCamaraA(nuevaPosicion, nuevoTarget) {
   function pasoAnimacion() {
     progreso += 0.05;
     if (progreso > 1) progreso = 1;
-
     camara.position.lerpVectors(posInicial, new THREE.Vector3(nuevaPosicion.x, nuevaPosicion.y, nuevaPosicion.z), progreso);
     controlesOrbita.target.lerpVectors(targetInicial, new THREE.Vector3(nuevoTarget.x, nuevoTarget.y, nuevoTarget.z), progreso);
     controlesOrbita.update();
-
-    if (progreso < 1) {
-      requestAnimationFrame(pasoAnimacion);
-    }
+    if (progreso < 1) requestAnimationFrame(pasoAnimacion);
   }
   pasoAnimacion();
 }
 
-// Controles de interfaz
+// Botones de selección directa por ID del centro
+function buscarYSeleccionar(id) {
+  const encontrado = centrosEsqui.find(c => c.id === id);
+  if (encontrado) seleccionarCentroEsqui(encontrado);
+}
+
+document.querySelector("#btn-valle").addEventListener("click", () => buscarYSeleccionar("valle-nevado"));
+document.querySelector("#btn-portillo").addEventListener("click", () => buscarYSeleccionar("portillo"));
+document.querySelector("#btn-chillan").addEventListener("click", () => buscarYSeleccionar("nevados-chillan"));
+
 document.querySelector("#modo-distribucion").addEventListener("change", (event) => {
   parametros.modo = event.target.value;
   generarRepresentacion();
 });
 
-document.querySelector("#actualizar").addEventListener("click", () => {
-  cargarDatosNieve();
-});
+document.querySelector("#actualizar").addEventListener("click", () => cargarDatosNieve());
 
 document.querySelector("#restablecer-vista").addEventListener("click", () => {
   animarCamaraA({ x: 0, y: 35, z: 30 }, { x: 0, y: 0, z: 0 });
@@ -278,10 +235,6 @@ document.querySelector("#restablecer-vista").addEventListener("click", () => {
   document.querySelector("#m-temp").textContent = "--";
   document.querySelector("#m-nieve").textContent = "--";
 });
-
-// ======================================================
-// 07 — LOOP DE ANIMACIÓN
-// ======================================================
 
 function animar() {
   requestAnimationFrame(animar);
