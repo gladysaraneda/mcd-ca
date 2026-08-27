@@ -18,7 +18,7 @@ let objetosCentros = [];
 let centroSeleccionado = null;
 
 // ======================================================
-// 02 — ESCENA
+// 02 — ESCENA Y CÁMARA
 // ======================================================
 
 const viewport = document.querySelector("#viewport");
@@ -31,21 +31,20 @@ const camara = new THREE.PerspectiveCamera(
   0.1,
   300
 );
-camara.position.set(18, 46, 24);
+camara.position.set(0, 35, 30);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(viewport.clientWidth, viewport.clientHeight);
 renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 viewport.appendChild(renderer.domElement);
 
 const controlesOrbita = new OrbitControls(camara, renderer.domElement);
 controlesOrbita.enableDamping = true;
-controlesOrbita.target.set(0, 2, 0);
+controlesOrbita.target.set(0, 0, 0);
 
-escena.add(new THREE.HemisphereLight(0xf2eee4, 0x1f2228, 1.8));
+escena.add(new THREE.HemisphereLight(0xffffff, 0x1f2228, 1.8));
 
 const luzPrincipal = new THREE.DirectionalLight(0xffffff, 2.7);
 luzPrincipal.position.set(18, 28, 14);
@@ -53,23 +52,16 @@ luzPrincipal.castShadow = true;
 escena.add(luzPrincipal);
 
 const suelo = new THREE.Mesh(
-  new THREE.PlaneGeometry(90, 90),
+  new THREE.PlaneGeometry(80, 80),
   new THREE.MeshStandardMaterial({ color: 0x101114, roughness: 1 })
 );
 suelo.rotation.x = -Math.PI / 2;
-suelo.position.y = -0.02;
+suelo.position.y = -0.05;
 suelo.receiveShadow = true;
 escena.add(suelo);
 
-const grilla = new THREE.GridHelper(70, 70, 0x34383d, 0x1e2024);
-grilla.position.y = 0.001;
-escena.add(grilla);
-
-const grupoEstaciones = new THREE.Group();
-escena.add(grupoEstaciones);
-
-const grupoBaseGeografica = new THREE.Group();
-escena.add(grupoBaseGeografica);
+const grupoCentros = new THREE.Group();
+escena.add(grupoCentros);
 
 // ======================================================
 // 03 — DATOS: FETCH + FALLBACK
