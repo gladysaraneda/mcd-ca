@@ -27,7 +27,7 @@ const escena = new THREE.Scene();
 escena.background = new THREE.Color(0x0b0b0c);
 
 const camara = new THREE.PerspectiveCamera(42, viewport.clientWidth / viewport.clientHeight, 0.1, 300);
-camara.position.set(0, 35, 25);
+camara.position.set(0, 40, 30);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -44,6 +44,15 @@ const luzPrincipal = new THREE.DirectionalLight(0xffffff, 2.7);
 luzPrincipal.position.set(18, 28, 14);
 escena.add(luzPrincipal);
 
+// Plano base gris elegante (la "mesa" de referencia territorial)
+const suelo = new THREE.Mesh(
+  new THREE.PlaneGeometry(30, 50),
+  new THREE.MeshStandardMaterial({ color: 0x16181d, roughness: 0.9 })
+);
+suelo.rotation.x = -Math.PI / 2;
+suelo.position.y = -0.05;
+escena.add(suelo);
+
 // Tooltip flotante para mostrar el nombre al pasar el cursor
 const tooltip = document.createElement("div");
 tooltip.style.position = "absolute";
@@ -59,8 +68,6 @@ document.body.appendChild(tooltip);
 
 const grupoCentros = new THREE.Group();
 escena.add(grupoCentros);
-const grupoMapaChile = new THREE.Group();
-escena.add(grupoMapaChile);
 
 function calcularPosiciones(centros) {
   if (parametros.modo === "geografico") {
@@ -69,10 +76,11 @@ function calcularPosiciones(centros) {
     const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
     const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
 
+    // Escala proporcionada para que los centros queden bien distribuidos sobre la mesa gris
     return centros.map((centro) => ({
       ...centro,
-      x: (centro.lon - lonCentro) * 35,
-      z: -(centro.lat - latCentro) * 22,
+      x: (centro.lon - lonCentro) * 18,
+      z: -(centro.lat - latCentro) * 12,
     }));
   } else {
     const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
@@ -96,24 +104,6 @@ function generarRepresentacion() {
   centrosEsqui = distribuidos;
 
   centrosEsqui.forEach(crearModuloCopo);
-
-  if (parametros.modo === "geografico") {
-    crearSiluetaChileContinua();
-  }
-}
-
-// Franja territorial larga y estilizada que une todo el territorio de norte a sur
-function crearSiluetaChileContinua() {
-  const geometriaMapa = new THREE.BoxGeometry(0.6, 0.2, 50);
-  const materialMapa = new THREE.MeshStandardMaterial({
-    color: 0x1e222b,
-    roughness: 0.8,
-    metalness: 0.2
-  });
-
-  const meshChile = new THREE.Mesh(geometriaMapa, materialMapa);
-  meshChile.position.set(0, -0.2, -2);
-  grupoMapaChile.add(meshChile);
 }
 
 function crearModuloCopo(centro) {
@@ -169,14 +159,14 @@ function crearModuloCopo(centro) {
 }
 
 function crearNieveLocal(posX, posZ) {
-  const cantidad = 35;
+  const cantidad = 30;
   const geom = new THREE.BufferGeometry();
   const posiciones = new Float32Array(cantidad * 3);
 
   for (let i = 0; i < cantidad * 3; i += 3) {
-    posiciones[i] = posX + (Math.random() - 0.5) * 2.5;
-    posiciones[i + 1] = Math.random() * 6 + 1;
-    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 2.5;
+    posiciones[i] = posX + (Math.random() - 0.5) * 2.0;
+    posiciones[i + 1] = Math.random() * 5 + 1;
+    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 2.0;
   }
 
   geom.setAttribute('position', new THREE.BufferAttribute(posiciones, 3));
@@ -189,7 +179,7 @@ function actualizarNieveLocal() {
     const pos = sistema.geometry.attributes.position.array;
     for (let i = 1; i < pos.length; i += 3) {
       pos[i] -= 0.08;
-      if (pos[i] < 0) pos[i] = 7;
+      if (pos[i] < 0) pos[i] = 6;
     }
     sistema.geometry.attributes.position.needsUpdate = true;
   });
@@ -207,14 +197,6 @@ function limpiarRepresentacion() {
       if (hijo.material) hijo.material.dispose();
     });
     grupoCentros.remove(obj);
-  }
-  while (grupoMapaChile.children.length > 0) {
-    const obj = grupoMapaChile.children[0];
-    obj.traverse((hijo) => {
-      if (hijo.geometry) hijo.geometry.dispose();
-      if (hijo.material) hijo.material.dispose();
-    });
-    grupoMapaChile.remove(obj);
   }
 }
 
@@ -304,6 +286,8 @@ document.querySelector("#btn-portillo").addEventListener("click", () => buscarYS
 document.querySelector("#btn-chillan").addEventListener("click", () => buscarYSeleccionar("nevados-chillan"));
 document.querySelector("#btn-pucon").addEventListener("click", () => buscarYSeleccionar("pucon"));
 document.querySelector("#btn-antillanca").addEventListener("click", () => buscarYSeleccionar("antillanca"));
+document.querySelector("#btn-osorno").addEventListener("click", () => buscarYSignado ? null : buscarYSeleccionar("volcan-osorno"));
+// Corrección limpia del evento de volcán osorno:
 document.querySelector("#btn-osorno").addEventListener("click", () => buscarYSeleccionar("volcan-osorno"));
 
 document.querySelector("#modo-distribucion").addEventListener("change", (event) => {
@@ -314,7 +298,7 @@ document.querySelector("#modo-distribucion").addEventListener("change", (event) 
 document.querySelector("#actualizar").addEventListener("click", () => generarRepresentacion());
 
 document.querySelector("#restablecer-vista").addEventListener("click", () => {
-  animarCamaraA({ x: 0, y: 35, z: 25 }, { x: 0, y: 0, z: 0 });
+  animarCamaraA({ x: 0, y: 40, z: 30 }, { x: 0, y: 0, z: 0 });
   document.querySelector("#estacion-nombre").textContent = "Selecciona un centro";
   document.querySelector("#m-estado").textContent = "--";
   document.querySelector("#m-temp").textContent = "--";
