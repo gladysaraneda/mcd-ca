@@ -14,7 +14,7 @@
           <p class="eyebrow">COMPUTACIÓN AVANZADA · MCD UAI</p>
           <h1>Estado de Nieve en Chile</h1>
           <p class="subtitle">
-            Monitoreo territorial interactivo: silueta de Chile en 3D, tooltips de nombres y partículas de nieve localizada.
+            Monitoreo territorial interactivo: caminos, cadenas, precipitaciones y estado de centros.
           </p>
         </div>
       </header>
@@ -34,20 +34,36 @@
         <h2 id="estacion-nombre">Selecciona un centro</h2>
       </div>
 
+      <!-- Contenedor de Imagen de la Estación -->
+      <div id="estacion-imagen-container" style="width: 100%; height: 130px; background: #21252b; border-radius: 6px; overflow: hidden; margin-bottom: 12px; display: none;">
+        <img id="estacion-foto" src="" alt="Centro de Esquí" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+
       <!-- Métricas del centro seleccionado -->
       <section class="control-group">
-        <h3>Condiciones Meteorológicas</h3>
-        <div style="font-size: 0.95rem; line-height: 1.6;">
+        <h3>Condiciones Meteorológicas y Acceso</h3>
+        <div style="font-size: 0.9rem; line-height: 1.6;">
           <p>Estado Operativo: <strong id="m-estado" style="color: #61afef;">--</strong></p>
           <p>Temperatura: <strong id="m-temp">--</strong> °C</p>
-          <p>Acumulación de Nieve: <strong id="m-nieve">--</strong> cm</p>
+          <p>Acumulación Nieve: <strong id="m-nieve">--</strong> cm</p>
+          <p>Precipitación: <strong id="m-precip">--</strong></p>
+          <p>Camino / Cadenas: <strong id="m-camino" style="color: #e5c07b;">--</strong></p>
         </div>
       </section>
 
-      <!-- Botones de selección directa con todos los centros del sur -->
+      <!-- Filtros de Visualización (Prendido / Apagado de Fichas) -->
+      <section class="control-group">
+        <h3>Filtrar Capas 3D</h3>
+        <div style="display: flex; gap: 8px; margin-top: 6px;">
+          <button id="toggle-nieve" style="flex: 1; padding: 6px; font-size: 0.75rem; cursor: pointer; background: #61afef; border: none; color: #fff; border-radius: 4px;">❄️ Nieve: ON</button>
+          <button id="toggle-lluvia" style="flex: 1; padding: 6px; font-size: 0.75rem; cursor: pointer; background: #e06c75; border: none; color: #fff; border-radius: 4px;">🌧️ Lluvia: ON</button>
+        </div>
+      </section>
+
+      <!-- Botones de selección directa -->
       <section class="control-group">
         <h3>Selección Directa de Centros</h3>
-        <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 8px; max-height: 180px; overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
           <button id="btn-valle" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Valle Nevado</button>
           <button id="btn-portillo" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Portillo</button>
           <button id="btn-chillan" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Nevados de Chillán</button>
@@ -73,13 +89,6 @@
         <button id="actualizar" style="width: 100%; margin-bottom: 8px; padding: 8px; cursor: pointer;">Recargar Datos</button>
         <button id="restablecer-vista" class="secondary" style="width: 100%; padding: 8px; cursor: pointer;">🔄 Restablecer Vista Inicial</button>
       </div>
-
-      <footer class="panel-footer" style="margin-top: 15px; font-size: 0.8rem; color: #888;">
-        <p>
-          Fuente: Dataset local · Esquí<br />
-          Sistema: activo
-        </p>
-      </footer>
     </aside>
   </main>
 
