@@ -2,31 +2,20 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 // ======================================================
-// 01 — CONFIGURACIÓN
+// 01 — CONFIGURACIÓN Y DATOS DE CENTROS DE ESQUÍ
 // ======================================================
-// Usamos un feed GBFS público de Citi Bike (Nueva York).
-// station_information describe dónde están las estaciones y su capacidad.
-// station_status describe su estado actual: bicicletas y anclajes disponibles.
 
-const URL_INFO =
-  "https://gbfs.lyft.com/gbfs/2.3/bkn/es/station_information.json";
-
-const URL_ESTADO =
-  "https://gbfs.lyft.com/gbfs/2.3/bkn/es/station_status.json";
-
-const INTERVALO_ACTUALIZACION = 15; // segundos.
+const URL_RESPALDO = "./assets/data/ski-respaldo.json";
 
 const parametros = {
   modo: "geografico",
-  escalaAltura: 0.15,
-  escalaAncho: 0.5,
-  cantidad: 80,
+  escalaAltura: 0.1,
+  escalaAncho: 0.8,
 };
 
-let actualizacionAutomatica = true;
-let segundosRestantes = INTERVALO_ACTUALIZACION;
-let estaciones = [];
-let objetosEstacion = [];
+let centrosEsqui = [];
+let objetosCentros = [];
+let centroSeleccionado = null;
 
 // ======================================================
 // 02 — ESCENA
@@ -532,3 +521,4 @@ window.addEventListener("resize", ajustarVentana);
 
 cargarDatosVivos();
 animar();
+//prueba
