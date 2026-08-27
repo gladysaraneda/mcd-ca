@@ -27,7 +27,7 @@ const escena = new THREE.Scene();
 escena.background = new THREE.Color(0x0b0b0c);
 
 const camara = new THREE.PerspectiveCamera(42, viewport.clientWidth / viewport.clientHeight, 0.1, 300);
-camara.position.set(0, 35, 25);
+camara.position.set(0, 18, 15);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -69,15 +69,16 @@ function calcularPosiciones(centros) {
     const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
     const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
 
+    // Escala ajustada milimétricamente al ancho del mapa poligonal
     return centros.map((centro) => ({
       ...centro,
-      x: (centro.lon - lonCentro) * 12,
-      z: -(centro.lat - latCentro) * 16,
+      x: (centro.lon - lonCentro) * 1.8,
+      z: -(centro.lat - latCentro) * 1.8,
     }));
   } else {
     const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
     const columnas = 3;
-    const separacion = 5.0;
+    const separacion = 2.5;
     return ordenados.map((centro, indice) => {
       const columna = indice % columnas;
       const fila = Math.floor(indice / columnas);
@@ -102,38 +103,37 @@ function generarRepresentacion() {
   }
 }
 
-// Representación cartográfica poligonal precisa de la silueta de Chile en 3D
+// Mapa poligonal de Chile en escala compacta
 function crearMapaChilePoligonal() {
-  // Puntos de contorno geográfico adaptados a las coordenadas locales de los centros
   const coordenadasContorno = [
-    new THREE.Vector3(0.5, 0, -16),
-    new THREE.Vector3(1.2, 0, -13),
-    new THREE.Vector3(1.8, 0, -10),
-    new THREE.Vector3(1.0, 0, -6),
-    new THREE.Vector3(0.6, 0, -3),
-    new THREE.Vector3(0.2, 0, 0),    // Zona central norte
-    new THREE.Vector3(-0.4, 0, 3),   // Región Metropolitana / Valparaíso
-    new THREE.Vector3(-1.2, 0, 7),   // Maule / Biobío
-    new THREE.Vector3(-2.0, 0, 11),  // Araucanía / Los Ríos (Pucón)
-    new THREE.Vector3(-2.5, 0, 14),  // Los Lagos (Osorno / Antillanca)
-    new THREE.Vector3(-1.8, 0, 16),
-    new THREE.Vector3(-0.8, 0, 14),
-    new THREE.Vector3(0.0, 0, 10),
-    new THREE.Vector3(0.4, 0, 5),
-    new THREE.Vector3(0.8, 0, 0),
-    new THREE.Vector3(1.2, 0, -5),
-    new THREE.Vector3(0.8, 0, -11),
-    new THREE.Vector3(0.5, 0, -16)   // Cierre del polígono
+    new THREE.Vector3(0.3, 0, -5),
+    new THREE.Vector3(0.8, 0, -4),
+    new THREE.Vector3(1.1, 0, -3),
+    new THREE.Vector3(0.7, 0, -1.8),
+    new THREE.Vector3(0.4, 0, -0.8),
+    new THREE.Vector3(0.1, 0, 0),
+    new THREE.Vector3(-0.3, 0, 1),
+    new THREE.Vector3(-0.8, 0, 2.2),
+    new THREE.Vector3(-1.3, 0, 3.5),
+    new THREE.Vector3(-1.6, 0, 4.5),
+    new THREE.Vector3(-1.2, 0, 5),
+    new THREE.Vector3(-0.5, 0, 4.5),
+    new THREE.Vector3(0.0, 0, 3),
+    new THREE.Vector3(0.2, 0, 1.5),
+    new THREE.Vector3(0.5, 0, 0),
+    new THREE.Vector3(0.8, 0, -1.5),
+    new THREE.Vector3(0.5, 0, -3.5),
+    new THREE.Vector3(0.3, 0, -5)
   ];
 
   const shape = new THREE.Shape(coordenadasContorno.map(p => new THREE.Vector2(p.x, p.z)));
   
   const extrudeSettings = {
     steps: 1,
-    depth: 0.4,
+    depth: 0.2,
     bevelEnabled: true,
-    bevelThickness: 0.1,
-    bevelSize: 0.1,
+    bevelThickness: 0.04,
+    bevelSize: 0.04,
   };
 
   const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
@@ -144,15 +144,14 @@ function crearMapaChilePoligonal() {
   });
 
   const meshMapa = new THREE.Mesh(geometry, material);
-  meshMapa.rotation.x = Math.PI / 2; // Acostar el mapa en el plano horizontal XZ
-  meshMapa.position.set(0, -0.25, 0);
+  meshMapa.rotation.x = Math.PI / 2;
+  meshMapa.position.set(0, -0.1, 0);
   grupoMapaChile.add(meshMapa);
 
-  // Línea de borde brillante estilo interfaz cartográfica
   const geomLinea = new THREE.BufferGeometry().setFromPoints(coordenadasContorno);
-  const matLinea = new THREE.LineBasicMaterial({ color: 0x61afef, linewidth: 2 });
+  const matLinea = new THREE.LineBasicMaterial({ color: 0x61afef });
   const lineaBorde = new THREE.Line(geomLinea, matLinea);
-  lineaBorde.position.y = 0.21;
+  lineaBorde.position.y = 0.11;
   grupoMapaChile.add(lineaBorde);
 }
 
@@ -164,15 +163,16 @@ function crearModuloCopo(centro) {
   const esOptimo = centro.estado === "optimo";
   const colorCopo = esOptimo ? 0x61afef : 0xe06c75;
 
-  const geoBase = new THREE.CylinderGeometry(0.6, 0.6, 0.2, 16);
+  // Centros reducidos proporcionalmente para encajar en el mapa
+  const geoBase = new THREE.CylinderGeometry(0.12, 0.12, 0.05, 16);
   const matBase = new THREE.MeshStandardMaterial({ color: 0xe06c75, roughness: 0.4 });
   const base = new THREE.Mesh(geoBase, matBase);
-  base.position.y = 0.1;
+  base.position.y = 0.025;
   base.userData.centro = centro;
   grupo.add(base);
 
   const grupoCopo = new THREE.Group();
-  grupoCopo.position.y = 1.2;
+  grupoCopo.position.y = 0.25;
 
   const matCopo = new THREE.MeshStandardMaterial({
     color: colorCopo,
@@ -181,23 +181,23 @@ function crearModuloCopo(centro) {
     emissiveIntensity: 0.4,
   });
 
-  const geoHex = new THREE.BoxGeometry(0.6, 0.2, 0.6);
+  const geoHex = new THREE.BoxGeometry(0.12, 0.04, 0.12);
   const hex = new THREE.Mesh(geoHex, matCopo);
   grupoCopo.add(hex);
 
   for (let i = 0; i < 3; i++) {
-    const brazoGeo = new THREE.BoxGeometry(2.4, 0.15, 0.3);
+    const brazoGeo = new THREE.BoxGeometry(0.4, 0.03, 0.06);
     const brazo = new THREE.Mesh(brazoGeo, matCopo);
     brazo.rotation.y = (i * Math.PI) / 3;
     grupoCopo.add(brazo);
   }
 
-  const escalaNieve = Math.max(0.6, centro.cm_nieve / 35);
-  grupoCopo.scale.set(escalaNieve, escalaNieve, escalaNieve);
+  const factorEscala = Math.max(0.6, centro.cm_nieve / 100);
+  grupoCopo.scale.set(factorEscala, factorEscala, factorEscala);
   grupoCopo.userData.centro = centro;
   grupo.add(grupoCopo);
 
-  // Nieve animada localizada solo sobre los centros óptimos
+  // Nieve animada localizada y sutil
   if (esOptimo) {
     const particulas = crearNieveLocal(centro.x, centro.z);
     sistemasNieveLocal.push(particulas);
@@ -209,18 +209,18 @@ function crearModuloCopo(centro) {
 }
 
 function crearNieveLocal(posX, posZ) {
-  const cantidad = 30;
+  const cantidad = 10;
   const geom = new THREE.BufferGeometry();
   const posiciones = new Float32Array(cantidad * 3);
 
   for (let i = 0; i < cantidad * 3; i += 3) {
-    posiciones[i] = posX + (Math.random() - 0.5) * 2.0;
-    posiciones[i + 1] = Math.random() * 5 + 1;
-    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 2.0;
+    posiciones[i] = posX + (Math.random() - 0.5) * 0.4;
+    posiciones[i + 1] = Math.random() * 1.2 + 0.3;
+    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 0.4;
   }
 
   geom.setAttribute('position', new THREE.BufferAttribute(posiciones, 3));
-  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.25, transparent: true, opacity: 0.75 });
+  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, transparent: true, opacity: 0.8 });
   return new THREE.Points(geom, mat);
 }
 
@@ -228,8 +228,8 @@ function actualizarNieveLocal() {
   sistemasNieveLocal.forEach(sistema => {
     const pos = sistema.geometry.attributes.position.array;
     for (let i = 1; i < pos.length; i += 3) {
-      pos[i] -= 0.08;
-      if (pos[i] < 0) pos[i] = 6;
+      pos[i] -= 0.03;
+      if (pos[i] < 0) pos[i] = 1.5;
     }
     sistema.geometry.attributes.position.needsUpdate = true;
   });
@@ -313,7 +313,7 @@ function seleccionarCentroEsqui(centro) {
   document.querySelector("#m-temp").textContent = centro.temperatura;
   document.querySelector("#m-nieve").textContent = centro.cm_nieve;
 
-  animarCamaraA({ x: centro.x, y: 6, z: centro.z + 5 }, { x: centro.x, y: 1, z: centro.z });
+  animarCamaraA({ x: centro.x, y: 1.5, z: centro.z + 1.5 }, { x: centro.x, y: 0, z: centro.z });
 }
 
 function animarCamaraA(nuevaPosicion, nuevoTarget) {
@@ -354,7 +354,7 @@ document.querySelector("#modo-distribucion").addEventListener("change", (event) 
 document.querySelector("#actualizar").addEventListener("click", () => generarRepresentacion());
 
 document.querySelector("#restablecer-vista").addEventListener("click", () => {
-  animarCamaraA({ x: 0, y: 35, z: 25 }, { x: 0, y: 0, z: 0 });
+  animarCamaraA({ x: 0, y: 18, z: 15 }, { x: 0, y: 0, z: 0 });
   document.querySelector("#estacion-nombre").textContent = "Selecciona un centro";
   document.querySelector("#m-estado").textContent = "--";
   document.querySelector("#m-temp").textContent = "--";
