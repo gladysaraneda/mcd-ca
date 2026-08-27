@@ -44,15 +44,6 @@ const luzPrincipal = new THREE.DirectionalLight(0xffffff, 2.7);
 luzPrincipal.position.set(18, 28, 14);
 escena.add(luzPrincipal);
 
-// Plano base gris elegante (la "mesa" de referencia territorial)
-const suelo = new THREE.Mesh(
-  new THREE.PlaneGeometry(30, 50),
-  new THREE.MeshStandardMaterial({ color: 0x16181d, roughness: 0.9 })
-);
-suelo.rotation.x = -Math.PI / 2;
-suelo.position.y = -0.05;
-escena.add(suelo);
-
 // Tooltip flotante para mostrar el nombre al pasar el cursor
 const tooltip = document.createElement("div");
 tooltip.style.position = "absolute";
@@ -68,6 +59,8 @@ document.body.appendChild(tooltip);
 
 const grupoCentros = new THREE.Group();
 escena.add(grupoCentros);
+const grupoMapaChile = new THREE.Group();
+escena.add(grupoMapaChile);
 
 function calcularPosiciones(centros) {
   if (parametros.modo === "geografico") {
@@ -76,11 +69,10 @@ function calcularPosiciones(centros) {
     const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
     const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
 
-    // Escala proporcionada para que los centros queden bien distribuidos sobre la mesa gris
     return centros.map((centro) => ({
       ...centro,
-      x: (centro.lon - lonCentro) * 18,
-      z: -(centro.lat - latCentro) * 12,
+      x: (centro.lon - lonCentro) * 10,
+      z: -(centro.lat - latCentro) * 16,
     }));
   } else {
     const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
@@ -104,6 +96,55 @@ function generarRepresentacion() {
   centrosEsqui = distribuidos;
 
   centrosEsqui.forEach(crearModuloCopo);
+
+  if (parametros.modo === "geografico") {
+    crearSiluetaChile3D();
+  }
+}
+
+// Generar la plataforma tridimensional con la forma vectorial real del mapa de Chile
+function crearSiluetaChile3D() {
+  const shapeChile = new THREE.Shape();
+  
+  // Trazado de la silueta longitudinal de Chile (Norte a Sur)
+  shapeChile.moveTo(0.2, -14);   // Extremo norte
+  shapeChile.lineTo(0.8, -11);
+  shapeChile.lineTo(1.2, -8);
+  shapeChile.lineTo(0.6, -4);
+  shapeChile.lineTo(0.3, -1);
+  shapeChile.lineTo(-0.2, 3);    // Zona central (Santiago / Valparaíso)
+  shapeChile.lineTo(-0.8, 6);    // Maule / Biobío
+  shapeChile.lineTo(-1.4, 9);    // Araucanía / Los Ríos
+  shapeChile.lineTo(-1.8, 11);   // Los Lagos (Puerto Montt / Chiloé)
+  shapeChile.lineTo(-1.2, 13);
+  shapeChile.lineTo(-0.4, 12);   // Cierre este hacia la cordillera
+  shapeChile.lineTo(0.0, 8);
+  shapeChile.lineTo(0.2, 3);
+  shapeChile.lineTo(0.5, -2);
+  shapeChile.lineTo(0.8, -7);
+  shapeChile.lineTo(0.5, -11);
+  shapeChile.lineTo(0.2, -14);
+  shapeChile.closePath();
+
+  const extrudeSettings = {
+    steps: 1,
+    depth: 0.4,
+    bevelEnabled: true,
+    bevelThickness: 0.1,
+    bevelSize: 0.1,
+  };
+
+  const geometry = new THREE.ExtrudeGeometry(shapeChile, extrudeSettings);
+  const material = new THREE.MeshStandardMaterial({
+    color: 0x16181d,
+    roughness: 0.8,
+    metalness: 0.2
+  });
+
+  const meshChile = new THREE.Mesh(geometry, material);
+  meshChile.rotation.x = Math.PI / 2; // Acostar el mapa horizontalmente en el plano XZ
+  meshChile.position.set(0, -0.2, 0);
+  grupoMapaChile.add(meshChile);
 }
 
 function crearModuloCopo(centro) {
@@ -198,6 +239,14 @@ function limpiarRepresentacion() {
     });
     grupoCentros.remove(obj);
   }
+  while (grupoMapaChile.children.length > 0) {
+    const obj = grupoMapaChile.children[0];
+    obj.traverse((hijo) => {
+      if (hijo.geometry) hijo.geometry.dispose();
+      if (hijo.material) hijo.material.dispose();
+    });
+    grupoMapaChile.remove(obj);
+  }
 }
 
 const raycaster = new THREE.Raycaster();
@@ -286,8 +335,6 @@ document.querySelector("#btn-portillo").addEventListener("click", () => buscarYS
 document.querySelector("#btn-chillan").addEventListener("click", () => buscarYSeleccionar("nevados-chillan"));
 document.querySelector("#btn-pucon").addEventListener("click", () => buscarYSeleccionar("pucon"));
 document.querySelector("#btn-antillanca").addEventListener("click", () => buscarYSeleccionar("antillanca"));
-document.querySelector("#btn-osorno").addEventListener("click", () => buscarYSignado ? null : buscarYSeleccionar("volcan-osorno"));
-// Corrección limpia del evento de volcán osorno:
 document.querySelector("#btn-osorno").addEventListener("click", () => buscarYSeleccionar("volcan-osorno"));
 
 document.querySelector("#modo-distribucion").addEventListener("change", (event) => {
