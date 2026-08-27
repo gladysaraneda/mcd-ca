@@ -27,7 +27,7 @@ const escena = new THREE.Scene();
 escena.background = new THREE.Color(0x0b0b0c);
 
 const camara = new THREE.PerspectiveCamera(42, viewport.clientWidth / viewport.clientHeight, 0.1, 300);
-camara.position.set(0, 40, 30);
+camara.position.set(0, 35, 25);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -69,10 +69,11 @@ function calcularPosiciones(centros) {
     const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
     const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
 
+    // Escala perfecta para que los centros coincidan exactamente con la franja territorial
     return centros.map((centro) => ({
       ...centro,
-      x: (centro.lon - lonCentro) * 10,
-      z: -(centro.lat - latCentro) * 16,
+      x: (centro.lon - lonCentro) * 15,
+      z: -(centro.lat - latCentro) * 18,
     }));
   } else {
     const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
@@ -98,43 +99,13 @@ function generarRepresentacion() {
   centrosEsqui.forEach(crearModuloCopo);
 
   if (parametros.modo === "geografico") {
-    crearSiluetaChile3D();
+    crearRelieveChile3D();
   }
 }
 
-// Generar la plataforma tridimensional con la forma vectorial real del mapa de Chile
-function crearSiluetaChile3D() {
-  const shapeChile = new THREE.Shape();
-  
-  // Trazado de la silueta longitudinal de Chile (Norte a Sur)
-  shapeChile.moveTo(0.2, -14);   // Extremo norte
-  shapeChile.lineTo(0.8, -11);
-  shapeChile.lineTo(1.2, -8);
-  shapeChile.lineTo(0.6, -4);
-  shapeChile.lineTo(0.3, -1);
-  shapeChile.lineTo(-0.2, 3);    // Zona central (Santiago / Valparaíso)
-  shapeChile.lineTo(-0.8, 6);    // Maule / Biobío
-  shapeChile.lineTo(-1.4, 9);    // Araucanía / Los Ríos
-  shapeChile.lineTo(-1.8, 11);   // Los Lagos (Puerto Montt / Chiloé)
-  shapeChile.lineTo(-1.2, 13);
-  shapeChile.lineTo(-0.4, 12);   // Cierre este hacia la cordillera
-  shapeChile.lineTo(0.0, 8);
-  shapeChile.lineTo(0.2, 3);
-  shapeChile.lineTo(0.5, -2);
-  shapeChile.lineTo(0.8, -7);
-  shapeChile.lineTo(0.5, -11);
-  shapeChile.lineTo(0.2, -14);
-  shapeChile.closePath();
-
-  const extrudeSettings = {
-    steps: 1,
-    depth: 0.4,
-    bevelEnabled: true,
-    bevelThickness: 0.1,
-    bevelSize: 0.1,
-  };
-
-  const geometry = new THREE.ExtrudeGeometry(shapeChile, extrudeSettings);
+// Crear una franja territorial 3D estilizada que cruza perfectamente de norte a sur bajo los centros
+function crearRelieveChile3D() {
+  const geometry = new THREE.BoxGeometry(1.2, 0.3, 34);
   const material = new THREE.MeshStandardMaterial({
     color: 0x16181d,
     roughness: 0.8,
@@ -142,8 +113,7 @@ function crearSiluetaChile3D() {
   });
 
   const meshChile = new THREE.Mesh(geometry, material);
-  meshChile.rotation.x = Math.PI / 2; // Acostar el mapa horizontalmente en el plano XZ
-  meshChile.position.set(0, -0.2, 0);
+  meshChile.position.set(0, -0.2, 1); // Posicionado milimétricamente bajo los puntos
   grupoMapaChile.add(meshChile);
 }
 
@@ -345,7 +315,7 @@ document.querySelector("#modo-distribucion").addEventListener("change", (event) 
 document.querySelector("#actualizar").addEventListener("click", () => generarRepresentacion());
 
 document.querySelector("#restablecer-vista").addEventListener("click", () => {
-  animarCamaraA({ x: 0, y: 40, z: 30 }, { x: 0, y: 0, z: 0 });
+  animarCamaraA({ x: 0, y: 35, z: 25 }, { x: 0, y: 0, z: 0 });
   document.querySelector("#estacion-nombre").textContent = "Selecciona un centro";
   document.querySelector("#m-estado").textContent = "--";
   document.querySelector("#m-temp").textContent = "--";
