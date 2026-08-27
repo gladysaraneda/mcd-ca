@@ -85,48 +85,36 @@ async function cargarDatosNieve() {
 }
 
 // ======================================================
-// 04 — REGLAS: INPUT → RELACIÓN → OUTPUT
+// 04 — REGLAS DE REPRESENTACIÓN (MAPPINGS)
 // ======================================================
 
-function calcularOcupacion(estacion) {
-  return estacion.capacidad > 0
-    ? estacion.bicicletas / estacion.capacidad
-    : 0;
-}
-
-function proyectarGeograficamente(estacionesSeleccionadas) {
-  // No construimos un mapa cartográfico exacto.
-  // Para este LAB hacemos una proyección local simple:
-  // longitud → X, latitud → Z.
-  const latitudes = estacionesSeleccionadas.map((e) => e.lat);
-  const longitudes = estacionesSeleccionadas.map((e) => e.lon);
+function proyectarGeograficamente(centros) {
+  // Mapping 1: Posición espacial basada en latitud y longitud simulando el territorio chileno
+  const latitudes = centros.map((c) => c.lat);
+  const longitudes = centros.map((c) => c.lon);
 
   const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
   const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
 
-  return estacionesSeleccionadas.map((estacion) => ({
-    ...estacion,
-    x: (estacion.lon - lonCentro) * 150,
-    z: -(estacion.lat - latCentro) * 150,
+  return centros.map((centro) => ({
+    ...centro,
+    x: (centro.lon - lonCentro) * 120, // Eje X territorial
+    z: -(centro.lat - latCentro) * 40,  // Eje Z longitudinal (norte-sur)
   }));
 }
 
-function ordenarPorOcupacion(estacionesSeleccionadas) {
-  const ordenadas = [...estacionesSeleccionadas].sort(
-    (a, b) => calcularOcupacion(b) - calcularOcupacion(a)
-  );
+function ordenarPorNieve(centros) {
+  const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
+  const columnas = 3;
+  const separacion = 4.0;
 
-  const columnas = Math.ceil(Math.sqrt(ordenadas.length));
-  const separacion = 2.0;
-
-  return ordenadas.map((estacion, indice) => {
+  return ordenados.map((centro, indice) => {
     const columna = indice % columnas;
     const fila = Math.floor(indice / columnas);
-
     return {
-      ...estacion,
-      x: (columna - columnas / 2) * separacion,
-      z: (fila - columnas / 2) * separacion,
+      ...centro,
+      x: (columna - columnas / 2 + 0.5) * separacion,
+      z: (fila - 1) * separacion,
     };
   });
 }
@@ -134,191 +122,12 @@ function ordenarPorOcupacion(estacionesSeleccionadas) {
 function generarRepresentacion() {
   limpiarRepresentacion();
 
-  const seleccion = seleccionarEstaciones(estaciones, parametros.cantidad);
-
-  const distribuidas =
+  const distribuidos =
     parametros.modo === "geografico"
-      ? proyectarGeograficamente(seleccion)
-      : ordenarPorOcupacion(seleccion);
+      ? proyectarGeograficamente(centrosEsqui)
+      : ordenarPorNieve(centrosEsqui);
 
-  actualizarBaseGeografica(distribuidas);
-  distribuidas.forEach(crearModuloEstacion);
-}
-
-function seleccionarEstaciones(lista, cantidad) {
-  // Elegimos un conjunto estable y suficientemente representativo.
-  // Ordenar por capacidad evita que el subconjunto dependa del orden arbitrario del feed.
-  return [...lista]
-    .sort((a, b) => b.capacidad - a.capacidad)
-    .slice(0, cantidad);
-}
-
-function crearModuloEstacion(estacion) {
-  const ocupacion = calcularOcupacion(estacion);
-
-  // REGLA 1:
-  // capacidad total → altura total del contenedor.
-  const alturaTotal =
-    Math.max(1.4, estacion.capacidad * parametros.escalaAltura);
-
-  // REGLA 2:
-  // bicicletas disponibles → fracción llena.
-  const alturaBicicletas = Math.max(0.08, alturaTotal * ocupacion);
-
-  // REGLA 3:
-  // porcentaje de ocupación → ancho del módulo.
-  const ancho =
-    (0.55 + ocupacion * 0.75) *
-    parametros.escalaAncho;
-
-  const grupo = new THREE.Group();
-  grupo.position.set(estacion.x, 0, estacion.z);
-  grupo.userData.estacion = estacion;
-
-  // Contenedor: representa la capacidad total.
-  const geometriaCapacidad = new THREE.BoxGeometry(ancho, alturaTotal, ancho);
-  const materialCapacidad = new THREE.MeshStandardMaterial({
-    color: 0x34383e,
-    roughness: 0.9,
-    transparent: true,
-    opacity: 0.55,
-  });
-
-  const capacidad = new THREE.Mesh(geometriaCapacidad, materialCapacidad);
-  capacidad.position.y = alturaTotal / 2;
-  capacidad.userData.estacion = estacion;
-  grupo.add(capacidad);
-
-  // Volumen claro: representa las bicicletas actualmente disponibles.
-  const geometriaBicicletas = new THREE.BoxGeometry(
-    ancho * 0.72,
-    alturaBicicletas,
-    ancho * 0.72
-  );
-  const materialBicicletas = new THREE.MeshStandardMaterial({
-    color: 0xddd7ca,
-    roughness: 0.5,
-  });
-
-  const bicicletas = new THREE.Mesh(geometriaBicicletas, materialBicicletas);
-  bicicletas.position.y = alturaBicicletas / 2;
-  bicicletas.castShadow = true;
-  bicicletas.userData.estacion = estacion;
-  grupo.add(bicicletas);
-
-  grupoEstaciones.add(grupo);
-  objetosEstacion.push(capacidad, bicicletas);
-}
-
-function limpiarRepresentacion() {
-  objetosEstacion = [];
-
-  while (grupoEstaciones.children.length > 0) {
-    const grupo = grupoEstaciones.children[0];
-
-    grupo.traverse((objeto) => {
-      if (objeto.geometry) objeto.geometry.dispose();
-      if (objeto.material) objeto.material.dispose();
-    });
-
-    grupoEstaciones.remove(grupo);
-  }
-}
-
-function actualizarBaseGeografica(estacionesDistribuidas) {
-  limpiarBaseGeografica();
-  grupoBaseGeografica.visible = parametros.modo === "geografico";
-
-  if (!grupoBaseGeografica.visible || estacionesDistribuidas.length === 0) return;
-
-  const xs = estacionesDistribuidas.map((estacion) => estacion.x);
-  const zs = estacionesDistribuidas.map((estacion) => estacion.z);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minZ = Math.min(...zs);
-  const maxZ = Math.max(...zs);
-  const ancho = maxX - minX;
-  const profundidad = maxZ - minZ;
-  const largoFlecha = Math.max(4, Math.min(ancho, profundidad) * 0.28);
-  const xGuia = minX - 3.2;
-  const zInicio = maxZ;
-  const zFinal = zInicio - largoFlecha;
-
-  const materialGuia = new THREE.LineBasicMaterial({
-    color: 0xd9d2c3,
-    transparent: true,
-    opacity: 0.5,
-  });
-
-  const flecha = new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(xGuia, 0.04, zInicio),
-      new THREE.Vector3(xGuia, 0.04, zFinal),
-    ]),
-    materialGuia
-  );
-
-  const cabeza = new THREE.Mesh(
-    new THREE.ConeGeometry(0.42, 1.1, 3),
-    new THREE.MeshBasicMaterial({
-      color: 0xd9d2c3,
-      transparent: true,
-      opacity: 0.55,
-    })
-  );
-  cabeza.rotation.x = Math.PI / 2;
-  cabeza.rotation.z = Math.PI;
-  cabeza.position.set(xGuia, 0.06, zFinal - 0.46);
-
-  grupoBaseGeografica.add(flecha, cabeza);
-  grupoBaseGeografica.add(crearEtiquetaSuelo("N", xGuia, zFinal - 1.45, 42));
-  grupoBaseGeografica.add(
-    crearEtiquetaSuelo("lon → / lat ↑", minX, maxZ + 1.9, 34)
-  );
-}
-
-function limpiarBaseGeografica() {
-  limpiarGrupo(grupoBaseGeografica);
-}
-
-function limpiarGrupo(grupo) {
-  while (grupo.children.length > 0) {
-    const objeto = grupo.children[0];
-
-    if (objeto.geometry) objeto.geometry.dispose();
-    if (objeto.material) {
-      if (objeto.material.map) objeto.material.map.dispose();
-      objeto.material.dispose();
-    }
-
-    grupo.remove(objeto);
-  }
-}
-
-function crearEtiquetaSuelo(texto, x, z, tamanoFuente) {
-  const canvas = document.createElement("canvas");
-  const contexto = canvas.getContext("2d");
-  canvas.width = 256;
-  canvas.height = 96;
-
-  contexto.fillStyle = "rgba(217, 210, 195, 0.72)";
-  contexto.font = `${tamanoFuente}px Roboto, Arial, sans-serif`;
-  contexto.textAlign = "center";
-  contexto.textBaseline = "middle";
-  contexto.fillText(texto, canvas.width / 2, canvas.height / 2);
-
-  const textura = new THREE.CanvasTexture(canvas);
-  const etiqueta = new THREE.Sprite(
-    new THREE.SpriteMaterial({
-      map: textura,
-      transparent: true,
-      depthWrite: false,
-    })
-  );
-  etiqueta.position.set(x, 0.18, z);
-  etiqueta.scale.set(5.4, 2.0, 1);
-
-  return etiqueta;
+  distribuidos.forEach(crearModuloCopo);
 }
 
 // ======================================================
