@@ -64,19 +64,18 @@ escena.add(grupoMapaChile);
 
 function calcularPosiciones(centros) {
   if (parametros.modo === "geografico") {
-    // Coordenadas calibradas con precisión exacta sobre la matriz territorial de cubos
     return centros.map((centro) => {
       let x = 0, z = 0;
       switch(centro.id) {
-        case "portillo": x = -0.2; z = -2.2; break;
-        case "valle-nevado": x = 0.2; z = -1.2; break;
-        case "el-colorado": x = 0.4; z = -1.0; break;
-        case "la-parva": x = 0.5; z = -0.8; break;
-        case "nevados-chillan": x = -0.3; z = 1.2; break;
-        case "corralco": x = -0.5; z = 2.2; break;
-        case "pucon": x = -0.8; z = 3.2; break;
-        case "antillanca": x = -1.1; z = 4.2; break;
-        case "volcan-osorno": x = -1.3; z = 4.8; break;
+        case "portillo": x = -0.15; z = -2.0; break;
+        case "valle-nevado": x = 0.15; z = -1.1; break;
+        case "el-colorado": x = 0.3; z = -0.9; break;
+        case "la-parva": x = 0.45; z = -0.7; break;
+        case "nevados-chillan": x = -0.25; z = 1.0; break;
+        case "corralco": x = -0.4; z = 1.9; break;
+        case "pucon": x = -0.65; z = 2.8; break;
+        case "antillanca": x = -0.9; z = 3.6; break;
+        case "volcan-osorno": x = -1.1; z = 4.2; break;
       }
       return { ...centro, x, z };
     });
@@ -104,46 +103,34 @@ function generarRepresentacion() {
   centrosEsqui.forEach(crearModuloCopo);
 
   if (parametros.modo === "geografico") {
-    crearMapaChileCubos();
+    crearMapaChileCubosPixelados();
   }
 }
 
-// Generar el mapa de Chile formado por una matriz de cubos 3D (estilo voxel)
-function crearMapaChileCubos() {
-  const geomCubo = new THREE.BoxGeometry(0.35, 0.2, 0.35);
+// Mapa pixelado de Chile en cubos blancos pequeños y detallados
+function crearMapaChileCubosPixelados() {
+  const geomCubo = new THREE.BoxGeometry(0.18, 0.12, 0.18);
   const matCubo = new THREE.MeshStandardMaterial({
-    color: 0x21252b,
-    roughness: 0.7,
-    metalness: 0.2
+    color: 0xdddddd,
+    roughness: 0.5,
+    metalness: 0.1
   });
 
-  // Matriz de coordenadas Z (Norte a Sur) y X para formar la silueta de Chile con cubos
-  const offsetsChile = [
-    // Norte Grande / Altiplano
-    {x: -0.4, z: -5.5}, {x: -0.2, z: -5.5}, {x: 0.0, z: -5.2},
-    {x: -0.3, z: -4.8}, {x: -0.1, z: -4.8}, {x: 0.2, z: -4.5},
-    {x: -0.2, z: -4.2}, {x: 0.1, z: -4.2}, {x: 0.3, z: -3.8},
-    // Norte Chico
-    {x: -0.1, z: -3.5}, {x: 0.2, z: -3.5}, {x: 0.4, z: -3.2},
-    {x: -0.2, z: -2.8}, {x: 0.1, z: -2.8}, {x: 0.3, z: -2.5},
-    // Zona Central (Portillo, Valle Nevado, etc.)
-    {x: -0.2, z: -2.2}, {x: 0.1, z: -2.2}, {x: 0.3, z: -2.0},
-    {x: -0.3, z: -1.5}, {x: 0.0, z: -1.5}, {x: 0.2, z: -1.5}, {x: 0.4, z: -1.2},
-    {x: -0.2, z: -0.8}, {x: 0.1, z: -0.8}, {x: 0.3, z: -0.5},
-    // Zona Sur (Chillán, Pucón)
-    {x: -0.4, z: 0.0}, {x: -0.1, z: 0.0}, {x: 0.2, z: 0.2},
-    {x: -0.5, z: 0.6}, {x: -0.2, z: 0.6}, {x: 0.1, z: 0.8},
-    {x: -0.4, z: 1.2}, {x: -0.2, z: 1.2}, {x: 0.1, z: 1.5},
-    {x: -0.6, z: 1.8}, {x: -0.3, z: 1.8}, {x: 0.0, z: 2.0},
-    {x: -0.7, z: 2.2}, {x: -0.4, z: 2.5}, {x: -0.1, z: 2.5},
-    // Los Lagos / Patagonia (Antillanca, Osorno)
-    {x: -0.8, z: 3.0}, {x: -0.5, z: 3.0}, {x: -0.2, z: 3.2},
-    {x: -0.9, z: 3.5}, {x: -0.6, z: 3.8}, {x: -0.3, z: 4.0},
-    {x: -1.1, z: 4.2}, {x: -0.8, z: 4.5}, {x: -0.5, z: 4.8},
-    {x: -1.3, z: 4.8}, {x: -1.0, z: 5.2}, {x: -0.7, z: 5.5},
-    // Extremo Sur
-    {x: -0.8, z: 6.0}, {x: -0.5, z: 6.2}, {x: -0.3, z: 6.5}
-  ];
+  // Matriz densa de cubos pequeños (estilo pixel art 3D) formando la silueta alargada de Chile
+  const offsetsChile = [];
+  for (let z = -5.0; z <= 5.5; z += 0.22) {
+    // Curvatura longitudinal característica de Chile
+    let centroX = Math.sin(z * 0.4) * 0.4 - 0.1;
+    if (z > 2.5) centroX -= (z - 2.5) * 0.2; // Desviación hacia la Patagonia sur
+    
+    // Ancho variable de norte a sur
+    let ancho = 0.35;
+    if (z > 3.0) ancho = 0.55;
+
+    for (let x = centroX - ancho; x <= centroX + ancho; x += 0.2) {
+      offsetsChile.push({ x: x, z: z });
+    }
+  }
 
   offsetsChile.forEach(pos => {
     const cubo = new THREE.Mesh(geomCubo, matCubo);
@@ -160,15 +147,15 @@ function crearModuloCopo(centro) {
   const esOptimo = centro.estado === "optimo";
   const colorCopo = esOptimo ? 0x61afef : 0xe06c75;
 
-  const geoBase = new THREE.CylinderGeometry(0.12, 0.12, 0.05, 16);
+  const geoBase = new THREE.CylinderGeometry(0.1, 0.1, 0.04, 16);
   const matBase = new THREE.MeshStandardMaterial({ color: 0xe06c75, roughness: 0.4 });
   const base = new THREE.Mesh(geoBase, matBase);
-  base.position.y = 0.05;
+  base.position.y = 0.04;
   base.userData.centro = centro;
   grupo.add(base);
 
   const grupoCopo = new THREE.Group();
-  grupoCopo.position.y = 0.3;
+  grupoCopo.position.y = 0.22;
 
   const matCopo = new THREE.MeshStandardMaterial({
     color: colorCopo,
@@ -177,12 +164,12 @@ function crearModuloCopo(centro) {
     emissiveIntensity: 0.4,
   });
 
-  const geoHex = new THREE.BoxGeometry(0.12, 0.04, 0.12);
+  const geoHex = new THREE.BoxGeometry(0.1, 0.03, 0.1);
   const hex = new THREE.Mesh(geoHex, matCopo);
   grupoCopo.add(hex);
 
   for (let i = 0; i < 3; i++) {
-    const brazoGeo = new THREE.BoxGeometry(0.4, 0.03, 0.06);
+    const brazoGeo = new THREE.BoxGeometry(0.35, 0.025, 0.05);
     const brazo = new THREE.Mesh(brazoGeo, matCopo);
     brazo.rotation.y = (i * Math.PI) / 3;
     grupoCopo.add(brazo);
@@ -209,13 +196,13 @@ function crearNieveLocal(posX, posZ) {
   const posiciones = new Float32Array(cantidad * 3);
 
   for (let i = 0; i < cantidad * 3; i += 3) {
-    posiciones[i] = posX + (Math.random() - 0.5) * 0.3;
-    posiciones[i + 1] = Math.random() * 1.0 + 0.3;
-    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 0.3;
+    posiciones[i] = posX + (Math.random() - 0.5) * 0.25;
+    posiciones[i + 1] = Math.random() * 0.9 + 0.2;
+    posiciones[i + 2] = posZ + (Math.random() - 0.5) * 0.25;
   }
 
   geom.setAttribute('position', new THREE.BufferAttribute(posiciones, 3));
-  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.08, transparent: true, opacity: 0.8 });
+  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.06, transparent: true, opacity: 0.8 });
   return new THREE.Points(geom, mat);
 }
 
@@ -224,7 +211,7 @@ function actualizarNieveLocal() {
     const pos = sistema.geometry.attributes.position.array;
     for (let i = 1; i < pos.length; i += 3) {
       pos[i] -= 0.03;
-      if (pos[i] < 0) pos[i] = 1.3;
+      if (pos[i] < 0) pos[i] = 1.1;
     }
     sistema.geometry.attributes.position.needsUpdate = true;
   });
@@ -308,7 +295,7 @@ function seleccionarCentroEsqui(centro) {
   document.querySelector("#m-temp").textContent = centro.temperatura;
   document.querySelector("#m-nieve").textContent = centro.cm_nieve;
 
-  animarCamaraA({ x: centro.x, y: 1.5, z: centro.z + 1.5 }, { x: centro.x, y: 0, z: centro.z });
+  animarCamaraA({ x: centro.x, y: 1.2, z: centro.z + 1.2 }, { x: centro.x, y: 0, z: centro.z });
 }
 
 function animarCamaraA(nuevaPosicion, nuevoTarget) {
