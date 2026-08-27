@@ -14,27 +14,24 @@
           <p class="eyebrow">COMPUTACIÓN AVANZADA · MCD UAI</p>
           <h1>Estado de Nieve en Chile</h1>
           <p class="subtitle">
-            Monitoreo territorial interactivo: condiciones de nieve y estado operativo en centros de esquí.
+            Monitoreo territorial interactivo: condiciones de nieve, silueta de Chile y partículas de nieve en caída libre.
           </p>
         </div>
       </header>
 
-      <!-- Lienzo 3D de Three.js -->
       <div id="viewport"></div>
 
       <div class="hint">
-        Click en un centro para acercar y ver el copo · Arrastrar para orbitar · Rueda para zoom
+        Click en un centro para acercar · Arrastrar para orbitar · Rueda para zoom
       </div>
     </section>
 
-    <!-- Panel Lateral de Control y Datos -->
     <aside class="controls-panel">
       <div class="panel-header">
         <p class="eyebrow">CENTRO SELECCIONADO</p>
         <h2 id="estacion-nombre">Selecciona un centro</h2>
       </div>
 
-      <!-- Métricas del centro seleccionado -->
       <section class="control-group">
         <h3>Condiciones Meteorológicas</h3>
         <div style="font-size: 0.95rem; line-height: 1.6;">
@@ -44,17 +41,19 @@
         </div>
       </section>
 
-      <!-- NUEVOS BOTONES DE SELECCIÓN Y FILTRO (Sugerencia aplicada) -->
+      <!-- Botones de selección directa ampliados con todos los centros -->
       <section class="control-group">
         <h3>Selección Directa de Centros</h3>
-        <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px;">
-          <button id="btn-valle" class="secondary" style="padding: 6px; font-size: 0.85rem; cursor: pointer;">❄️ Valle Nevado</button>
-          <button id="btn-portillo" class="secondary" style="padding: 6px; font-size: 0.85rem; cursor: pointer;">❄️ Portillo</button>
-          <button id="btn-chillan" class="secondary" style="padding: 6px; font-size: 0.85rem; cursor: pointer;">❄️ Nevados de Chillán</button>
+        <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 8px; max-height: 180px; overflow-y: auto;">
+          <button id="btn-valle" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Valle Nevado</button>
+          <button id="btn-portillo" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Portillo</button>
+          <button id="btn-chillan" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Nevados de Chillán</button>
+          <button id="btn-pucon" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Pucón (Villarrica)</button>
+          <button id="btn-antillanca" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Antillanca</button>
+          <button id="btn-osorno" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Volcán Osorno</button>
         </div>
       </section>
 
-      <!-- Parámetros visuales -->
       <section class="control-group">
         <h3>Reglas de Representación</h3>
         <label>
@@ -73,8 +72,8 @@
 
       <footer class="panel-footer" style="margin-top: 15px; font-size: 0.8rem; color: #888;">
         <p>
-          Fuente: <span id="fuente-label">Dataset local · Esquí</span><br />
-          Sistema: <span id="actualizacion-label">activo</span>
+          Fuente: Dataset local · Esquí<br />
+          Sistema: activo
         </p>
       </footer>
     </aside>
