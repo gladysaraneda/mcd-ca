@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
-// DATOS DIRECTOS (Evita problemas de rutas con fetch)
+// DATOS AMPLIADOS: Centros de esquí desde la zona central hasta el sur de Chile
 const datosNieve = {
   "actualizado": "2026-08-27T16:00:00-04:00",
   "centros": [
@@ -10,8 +10,10 @@ const datosNieve = {
     { "id": "la-parva", "nombre": "La Parva", "lat": -33.3333, "lon": -70.2833, "estado": "cerrado", "temperatura": 1, "cm_nieve": 10 },
     { "id": "portillo", "nombre": "Portillo", "lat": -32.8361, "lon": -70.1389, "estado": "optimo", "temperatura": -4, "cm_nieve": 60 },
     { "id": "nevados-chillan", "nombre": "Nevados de Chillán", "lat": -36.9083, "lon": -71.4083, "estado": "optimo", "temperatura": -1, "cm_nieve": 80 },
-    { "id": "corralco", "nombre": "Corralco", "lat": -38.4236, "lon": -71.5644, "estado": "cerrado", "temperatura": 2, "cm_nieve": 15 },
-    { "id": "antillanca", "nombre": "Antillanca", "lat": -40.7667, "lon": -72.1833, "estado": "optimo", "temperatura": -2, "cm_nieve": 50 }
+    { "id": "pucon", "nombre": "Centro de Ski Pucón (Villarrica)", "lat": -39.4200, "lon": -71.9300, "estado": "optimo", "temperatura": -2, "cm_nieve": 70 },
+    { "id": "volcan-osorno", "nombre": "Volcán Osorno", "lat": -41.1000, "lon": -72.5000, "estado": "optimo", "temperatura": -3, "cm_nieve": 65 },
+    { "id": "antillanca", "nombre": "Antillanca", "lat": -40.7667, "lon": -72.1833, "estado": "optimo", "temperatura": -2, "cm_nieve": 50 },
+    { "id": "corralco", "nombre": "Corralco", "lat": -38.4236, "lon": -71.5644, "estado": "cerrado", "temperatura": 2, "cm_nieve": 15 }
   ]
 };
 
@@ -68,10 +70,11 @@ function proyectarGeograficamente(centros) {
   const latCentro = (Math.min(...latitudes) + Math.max(...latitudes)) / 2;
   const lonCentro = (Math.min(...longitudes) + Math.max(...longitudes)) / 2;
 
+  // Escala compacta centrada para que abarque desde la zona central hasta el sur
   return centros.map((centro) => ({
     ...centro,
-    x: (centro.lon - lonCentro) * 300,
-    z: -(centro.lat - latCentro) * 150,
+    x: (centro.lon - lonCentro) * 50,
+    z: -(centro.lat - latCentro) * 30,
   }));
 }
 
@@ -170,7 +173,7 @@ renderer.domElement.addEventListener("pointerdown", (event) => {
   const intersecciones = raycaster.intersectObjects(objetosCentros, true);
 
   if (intersecciones.length > 0) {
-    let objetoEncontrado = intersecciones.object;
+    let objetoEncontrado = intersecciones[0].object;
     while (objetoEncontrado.parent && !objetoEncontrado.userData.centro) {
       objetoEncontrado = objetoEncontrado.parent;
     }
@@ -244,6 +247,5 @@ window.addEventListener("resize", () => {
   renderer.setSize(ancho, altura);
 });
 
-// Inicialización directa
 generarRepresentacion();
 animar();
