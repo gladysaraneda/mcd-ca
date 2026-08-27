@@ -64,80 +64,24 @@ const grupoCentros = new THREE.Group();
 escena.add(grupoCentros);
 
 // ======================================================
-// 03 — DATOS: FETCH + FALLBACK
+// 03 — CARGA DE DATOS LOCALES
 // ======================================================
 
-async function cargarDatosVivos() {
-  actualizarEstadoConexion("conectando");
-
+async function cargarDatosNieve() {
   try {
-    // Dos fuentes del mismo sistema:
-    // 1) información espacial y capacidad
-    // 2) estado operativo actual
-    const [respuestaInfo, respuestaEstado] = await Promise.all([
-      fetch(URL_INFO, { cache: "no-store" }),
-      fetch(URL_ESTADO, { cache: "no-store" }),
-    ]);
-
-    if (!respuestaInfo.ok || !respuestaEstado.ok) {
-      throw new Error("La API respondió con un estado no válido.");
-    }
-
-    const info = await respuestaInfo.json();
-    const estado = await respuestaEstado.json();
-
-    estaciones = combinarFeedsGBFS(info, estado);
-    actualizarEstadoConexion("vivo");
-    document.querySelector("#fuente-label").textContent = "Citi Bike · GBFS";
-    document.querySelector("#actualizacion-label").textContent =
-      formatearHora(estado.last_updated);
+    const respuesta = await fetch(URL_RESPALDO, { cache: "no-store" });
+    if (!respuesta.ok) throw new Error("No se pudo cargar el archivo de respaldo.");
+    
+    const datos = await respuesta.json();
+    centrosEsqui = datos.centros;
+    
+    document.querySelector("#fuente-label").textContent = "Dataset local · Esquí Chile";
+    document.querySelector("#actualizacion-label").textContent = "activo";
 
     generarRepresentacion();
   } catch (error) {
-    console.warn("No fue posible usar el feed vivo. Se utilizará el dataset local.", error);
-    await cargarRespaldoLocal();
+    console.error("Error al cargar los datos de nieve:", error);
   }
-}
-
-async function cargarRespaldoLocal() {
-  const respuesta = await fetch("./assets/data/movilidad-respaldo.json");
-  const datos = await respuesta.json();
-
-  estaciones = datos.estaciones;
-  actualizarEstadoConexion("respaldo");
-  document.querySelector("#fuente-label").textContent = "Dataset local · respaldo";
-  document.querySelector("#actualizacion-label").textContent = "archivo local";
-
-  generarRepresentacion();
-}
-
-function combinarFeedsGBFS(info, estado) {
-  // station_id es la llave que permite unir ambos feeds.
-  const estadosPorId = new Map(
-    estado.data.stations.map((estacion) => [estacion.station_id, estacion])
-  );
-
-  return info.data.stations
-    .map((estacionInfo) => {
-      const estacionEstado = estadosPorId.get(estacionInfo.station_id);
-      if (!estacionEstado) return null;
-
-      const capacidad = estacionInfo.capacity ?? 0;
-      const bicicletas = estacionEstado.num_bikes_available ?? 0;
-      const anclajesLibres = estacionEstado.num_docks_available ?? 0;
-
-      return {
-        id: estacionInfo.station_id,
-        nombre: estacionInfo.name,
-        lat: estacionInfo.lat,
-        lon: estacionInfo.lon,
-        capacidad,
-        bicicletas,
-        anclajes_libres: anclajesLibres,
-      };
-    })
-    .filter(Boolean)
-    .filter((estacion) => estacion.capacidad > 0);
 }
 
 // ======================================================
