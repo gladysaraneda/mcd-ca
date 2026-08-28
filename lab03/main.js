@@ -93,7 +93,6 @@ const luzPrincipal = new THREE.DirectionalLight(0xffffff, 2.7);
 luzPrincipal.position.set(18, 28, 14);
 escena.add(luzPrincipal);
 
-// Tooltip flotante simple para hover
 const tooltip = document.createElement("div");
 tooltip.style.position = "absolute";
 tooltip.style.background = "rgba(0, 0, 0, 0.85)";
@@ -111,7 +110,6 @@ escena.add(grupoCentros);
 const grupoTopografia = new THREE.Group();
 escena.add(grupoTopografia);
 
-// Crear tarjeta flotante única (popup) para el centro seleccionado
 tarjetaFlotanteUnica = document.createElement("div");
 tarjetaFlotanteUnica.className = "centro-card-flotante";
 tarjetaFlotanteUnica.style.display = "none";
@@ -160,45 +158,57 @@ function generarRepresentacion() {
   const distribuidos = calcularPosiciones(centrosEsqui);
   centrosEsqui = distribuidos;
 
-  centrosEsqui.forEach(crearModuloEsferico);
+  centrosEsqui.forEach(crearModuloLinea);
 
   if (parametros.modo === "geografico") {
-    crearCordilleraDeEsferasOptimizada();
+    crearCordilleraCapasDeLineas();
   }
 }
 
-// Cordillera optimizada con menor carga poligonal para mantener el rendimiento fluido
-function crearCordilleraDeEsferasOptimizada() {
-  const geomEsfera = new THREE.SphereGeometry(0.12, 8, 8);
-  const matEsfera = new THREE.MeshStandardMaterial({
-    color: 0xffffff,
-    roughness: 0.7,
-    metalness: 0.1,
-    transparent: true,
-    opacity: 0.4
-  });
-
-  const offsetsCordillera = [];
-  for (let z = -5.8; z <= 6.8; z += 0.3) {
-    let centroX = Math.sin(z * 0.4) * 0.4 - 0.1;
-    if (z > 2.5) centroX -= (z - 2.5) * 0.2;
+// Cordillera construida con múltiples capas de líneas azuladas en cascada (Estilo arte generativo)
+function crearCordilleraCapasDeLineas() {
+  const numCapas = 22; // Cantidad de líneas paralelas en profundidad (Eje Z)
+  
+  for (let i = 0; i < numCapas; i++) {
+    const zOffset = -5.5 + (i * (11.0 / numCapas));
+    const puntosLinea = [];
     
-    for (let x = centroX - 0.55; x <= centroX + 0.55; x += 0.3) {
-      const altimetria = Math.abs(Math.sin(x * 2.5) * Math.cos(z * 1.2)) * 1.5 + 0.2;
-      offsetsCordillera.push({ x: x, z: z, y: altimetria });
+    // Generar puntos fluidos a lo largo del eje longitudinal (X)
+    for (let x = -2.5; x <= 2.5; x += 0.1) {
+      // Perfil de altimetría combinando funciones senoidales y armónicos para simular los Andes
+      let altimetria = Math.abs(Math.sin(x * 1.2 + i * 0.15) * Math.cos(x * 0.5 - zOffset * 0.2)) * 1.8;
+      altimetria += Math.sin(x * 3.0 + i * 0.1) * 0.3;
+      
+      // Atenuar los bordes para que parezca una cordillera central acotada
+      let factorAtenuacion = Math.max(0, 1 - Math.abs(x) / 2.5);
+      let y = Math.max(0.1, altimetria * factorAtenuacion + (i * 0.04));
+      
+      puntosLinea.push(new THREE.Vector3(x, y, zOffset + (Math.sin(x * 2) * 0.1)));
     }
-  }
 
-  offsetsCordillera.forEach(pos => {
-    const esfera = new THREE.Mesh(geomEsfera, matEsfera);
-    const escalaAlt = Math.max(0.6, pos.y * 0.9);
-    esfera.scale.set(escalaAlt, escalaAlt, escalaAlt);
-    esfera.position.set(pos.x, pos.y, pos.z);
-    grupoTopografia.add(esfera);
-  });
+    const geometriaLinea = new THREE.BufferGeometry().setFromPoints(puntosLinea);
+    
+    // Gradiente de color y opacidad: las líneas superiores más blancas y brillantes, las inferiores más azuladas
+    const opacidadCapa = 0.3 + (i / numCapas) * 0.5;
+    const colorCapa = new THREE.Color().lerpColors(
+      new THREE.Color(0x2152ff), // Azul profundo abajo
+      new THREE.Color(0x61afef), // Azul claro / blanco arriba
+      i / numCapas
+    );
+
+    const materialLinea = new THREE.LineBasicMaterial({
+      color: colorCapa,
+      transparent: true,
+      opacity: opacidadCapa,
+      linewidth: 1.5
+    });
+
+    const lineaCordillera = new THREE.Line(geometriaLinea, materialLinea);
+    grupoTopografia.add(lineaCordillera);
+  }
 }
 
-function crearModuloEsferico(centro) {
+function crearModuloLinea(centro) {
   const grupo = new THREE.Group();
   grupo.position.set(centro.x, 0, centro.z);
   grupo.userData.centro = centro;
@@ -213,20 +223,22 @@ function crearModuloEsferico(centro) {
   const esOptimo = centro.estado === "optimo";
   const colorCopo = esOptimo ? 0x61afef : 0xe06c75;
 
+  // Esfera principal del centro (Celeste si óptimo, Roja si cerrado)
   const geomEsferaCentro = new THREE.SphereGeometry(0.25, 16, 16);
   const matEsferaCentro = new THREE.MeshStandardMaterial({
     color: esOptimo ? 0xffffff : 0xff4d4d,
     roughness: 0.3,
     transparent: true,
-    opacity: 0.7,
+    opacity: 0.8,
     emissive: colorCopo,
-    emissiveIntensity: 0.5
+    emissiveIntensity: 0.6
   });
   const mallaCentro = new THREE.Mesh(geomEsferaCentro, matEsferaCentro);
   mallaCentro.position.y = alturaCentro;
   mallaCentro.userData.centro = centro;
   grupo.add(mallaCentro);
 
+  // Copo geométrico flotando y animado encima
   const grupoCopo = new THREE.Group();
   grupoCopo.position.y = alturaCentro + 0.45;
 
@@ -296,7 +308,6 @@ function actualizarAnimaciones() {
     copo.rotation.y += 0.01;
   });
 
-  // Actualizar posición de la tarjeta flotante (popup) del centro activo
   if (centroActivoPopup && tarjetaFlotanteUnica) {
     let nieveActual = centroActivoPopup.cm_nieve;
     if (parametros.mesSeleccionado !== "actual" && centroActivoPopup.mensual) {
@@ -431,7 +442,6 @@ function seleccionarCentroEsqui(centro) {
     imgContainer.style.display = "none";
   }
 
-  // Generar gráfico de líneas con retícula (estilo tu imagen de referencia) en la tarjeta pop-up
   actualizarPopupGrafico(centro);
 
   animarCamaraA({ x: centro.x, y: 3.5, z: centro.z + 3.0 }, { x: centro.x, y: 1.0, z: centro.z });
@@ -440,12 +450,11 @@ function seleccionarCentroEsqui(centro) {
 function actualizarPopupGrafico(centro) {
   const meses = ["May", "Jun", "Jul", "Ago", "Sep", "Oct"];
   const valores = centro.mensual || [0,0,0,0,0,0];
-  const maxVal = Math.max(...valores, 100);
+  const maxVal = Math.max(...valores, 140);
 
-  // Coordenadas SVG para la línea curva con puntos
   const points = valores.map((v, i) => {
-    const px = i * 32 + 15;
-    const py = 60 - (v / maxVal) * 45;
+    const px = i * 30 + 15;
+    const py = 65 - (v / maxVal) * 50;
     return `${px},${py}`;
   });
 
@@ -453,19 +462,16 @@ function actualizarPopupGrafico(centro) {
     <div class="card-title">${centro.nombre}</div>
     <div class="chart-container-grid">
       <svg class="line-chart-svg" viewBox="0 0 180 75">
-        <!-- Retícula de fondo (líneas horizontales estilo gráfico) -->
         <line x1="10" y1="15" x2="170" y2="15" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
         <line x1="10" y1="30" x2="170" y2="30" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
         <line x1="10" y1="45" x2="170" y2="45" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
         <line x1="10" y1="60" x2="170" y2="60" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
 
-        <!-- Línea curva de tendencia -->
         <polyline fill="none" stroke="#61afef" stroke-width="2.5" points="${points.join(' ')}" />
 
-        <!-- Puntos de datos sobre la línea -->
         ${valores.map((v, i) => {
-          const px = i * 32 + 15;
-          const py = 60 - (v / maxVal) * 45;
+          const px = i * 30 + 15;
+          const py = 65 - (v / maxVal) * 50;
           return `<circle cx="${px}" cy="${py}" r="3.5" fill="#61afef" />`;
         }).join('')}
       </svg>
