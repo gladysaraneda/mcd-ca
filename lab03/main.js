@@ -2,61 +2,115 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
 const datosNieve = {
-  "actualizado": "2026-08-27T16:00:00-04:00",
+  "actualizado": "2026-08-28T14:00:00-04:00",
   "centros": [
+    // ZONA CENTRAL
     { 
       "id": "valle-nevado", "nombre": "Valle Nevado", "lat": -33.3567, "lon": -70.2528, 
-      "estado": "optimo", "temperatura": -2, "cm_nieve": 45, "precipitacion": "Nieve ligera", 
-      "camino": "Obligatorio uso de cadenas", "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80",
+      "estado": "optimo", "tiempoReal": true, "temperatura": -2, "cm_nieve": 45, "precipitacion": "Nieve ligera", 
+      "pistas": "85% abiertas", "camino": "Obligatorio uso de cadenas", 
+      "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80",
       "mensual": [20, 55, 90, 45, 30, 15]
     },
     { 
-      "id": "el-colorado", "nombre": "El Colorado", "lat": -33.3444, "lon": -70.2889, 
-      "estado": "optimo", "temperatura": -3, "cm_nieve": 40, "precipitacion": "Nevando", 
-      "camino": "Cadenas obligatorias", "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
+      "id": "el-colorado", "nombre": "El Colorado / Farellones", "lat": -33.3444, "lon": -70.2889, 
+      "estado": "optimo", "tiempoReal": true, "temperatura": -3, "cm_nieve": 40, "precipitacion": "Nevando", 
+      "pistas": "90% abiertas", "camino": "Cadenas obligatorias", 
+      "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
       "mensual": [15, 50, 85, 40, 25, 10]
     },
     { 
       "id": "la-parva", "nombre": "La Parva", "lat": -33.3333, "lon": -70.2833, 
-      "estado": "cerrado", "temperatura": 1, "cm_nieve": 10, "precipitacion": "Lluvia débil", 
-      "camino": "Camino con precaución", "imagen": "https://images.unsplash.com/photo-1482867665717-f371a3372991?auto=format&fit=crop&w=600&q=80",
-      "mensual": [5, 20, 40, 10, 10, 5]
+      "estado": "optimo", "tiempoReal": true, "temperatura": -1, "cm_nieve": 35, "precipitacion": "Nublado", 
+      "pistas": "80% abiertas", "camino": "Camino con precaución", 
+      "imagen": "https://images.unsplash.com/photo-1482867665717-f371a3372991?auto=format&fit=crop&w=600&q=80",
+      "mensual": [12, 45, 80, 35, 20, 8]
     },
     { 
       "id": "portillo", "nombre": "Portillo", "lat": -32.8361, "lon": -70.1389, 
-      "estado": "optimo", "temperatura": -4, "cm_nieve": 60, "precipitacion": "Nieve intensa", 
-      "camino": "Cadenas obligatorias (Ruta 60)", "imagen": "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&fit=crop&w=600&q=80",
+      "estado": "optimo", "tiempoReal": true, "temperatura": -4, "cm_nieve": 60, "precipitacion": "Nieve intensa", 
+      "pistas": "95% abiertas", "camino": "Cadenas obligatorias (Ruta 60)", 
+      "imagen": "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&fit=crop&w=600&q=80",
       "mensual": [30, 70, 110, 60, 40, 20]
     },
     { 
+      "id": "lagunillas", "nombre": "Lagunillas", "lat": -33.6833, "lon": -70.3667, 
+      "estado": "optimo", "tiempoReal": false, "temperatura": -1, "cm_nieve": 30, "precipitacion": "Despejado", 
+      "pistas": "70% abiertas", "camino": "Transitable con precaución", 
+      "imagen": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+      "mensual": [10, 35, 65, 30, 15, 5]
+    },
+    { 
+      "id": "chapa-verde", "nombre": "Chapa Verde", "lat": -34.0333, "lon": -70.4333, 
+      "estado": "optimo", "tiempoReal": false, "temperatura": 0, "cm_nieve": 35, "precipitacion": "Parcial", 
+      "pistas": "75% abiertas", "camino": "Transitable", 
+      "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80",
+      "mensual": [15, 40, 75, 35, 20, 10]
+    },
+
+    // ZONA SUR Y AUSTRAL
+    { 
       "id": "nevados-chillan", "nombre": "Nevados de Chillán", "lat": -36.9083, "lon": -71.4083, 
-      "estado": "optimo", "temperatura": -1, "cm_nieve": 80, "precipitacion": "Nieve moderada", 
-      "camino": "Transitable con cadenas", "imagen": "https://images.unsplash.com/photo-1605540436563-5bca919ae766?auto=format&fit=crop&w=600&q=80",
+      "estado": "optimo", "tiempoReal": true, "temperatura": -1, "cm_nieve": 80, "precipitacion": "Nieve moderada", 
+      "pistas": "95% abiertas", "camino": "Transitable con cadenas", 
+      "imagen": "https://images.unsplash.com/photo-1605540436563-5bca919ae766?auto=format&fit=crop&w=600&q=80",
       "mensual": [40, 90, 140, 80, 55, 30]
     },
     { 
-      "id": "pucon", "nombre": "Pucón (Villarrica)", "lat": -39.4200, "lon": -71.9300, 
-      "estado": "optimo", "temperatura": -2, "cm_nieve": 70, "precipitacion": "Lluvia y Nieve", 
-      "camino": "Transitable con precaución", "imagen": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+      "id": "corralco", "nombre": "Corralco", "lat": -38.4236, "lon": -71.5644, 
+      "estado": "cerrado", "tiempoReal": true, "temperatura": 2, "cm_nieve": 15, "precipitacion": "Lluvia", 
+      "pistas": "Cerrado por clima", "camino": "Transitable", 
+      "imagen": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=600&q=80",
+      "mensual": [10, 30, 55, 15, 15, 5]
+    },
+    { 
+      "id": "antuco", "nombre": "Antuco", "lat": -37.3500, "lon": -71.3500, 
+      "estado": "optimo", "tiempoReal": false, "temperatura": -2, "cm_nieve": 40, "precipitacion": "Nieve ligera", 
+      "pistas": "70% abiertas", "camino": "Cadenas requeridas", 
+      "imagen": "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80",
+      "mensual": [12, 45, 80, 40, 22, 10]
+    },
+    { 
+      "id": "las-araucarias", "nombre": "Las Araucarias", "lat": -38.6833, "lon": -71.4167, 
+      "estado": "optimo", "tiempoReal": false, "temperatura": -1, "cm_nieve": 45, "precipitacion": "Nieve", 
+      "pistas": "80% abiertas", "camino": "Cadenas recomendadas", 
+      "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
+      "mensual": [15, 50, 85, 45, 25, 12]
+    },
+    { 
+      "id": "pucon", "nombre": "Centro de Montaña Pillán (Villarrica)", "lat": -39.4200, "lon": -71.9300, 
+      "estado": "optimo", "tiempoReal": true, "temperatura": -2, "cm_nieve": 70, "precipitacion": "Lluvia y Nieve", 
+      "pistas": "85% abiertas", "camino": "Transitable con precaución", 
+      "imagen": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
       "mensual": [35, 80, 120, 70, 45, 25]
     },
     { 
       "id": "antillanca", "nombre": "Antillanca", "lat": -40.7667, "lon": -72.1833, 
-      "estado": "optimo", "temperatura": -2, "cm_nieve": 50, "precipitacion": "Nieve", 
-      "camino": "Uso de cadenas requerido", "imagen": "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80",
+      "estado": "optimo", "tiempoReal": true, "temperatura": -2, "cm_nieve": 50, "precipitacion": "Nieve", 
+      "pistas": "85% abiertas", "camino": "Uso de cadenas requerido", 
+      "imagen": "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80",
       "mensual": [25, 60, 95, 50, 35, 15]
     },
     { 
       "id": "volcan-osorno", "nombre": "Volcán Osorno", "lat": -41.1000, "lon": -72.5000, 
-      "estado": "optimo", "temperatura": -3, "cm_nieve": 65, "precipitacion": "Nieve ligera", 
-      "camino": "Cadenas recomendadas", "imagen": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+      "estado": "optimo", "tiempoReal": true, "temperatura": -3, "cm_nieve": 65, "precipitacion": "Nieve ligera", 
+      "pistas": "90% abiertas", "camino": "Cadenas recomendadas", 
+      "imagen": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
       "mensual": [30, 75, 115, 65, 40, 20]
     },
     { 
-      "id": "corralco", "nombre": "Corralco", "lat": -38.4236, "lon": -71.5644, 
-      "estado": "cerrado", "temperatura": 2, "cm_nieve": 15, "precipitacion": "Lluvia", 
-      "camino": "Transitable", "imagen": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=600&q=80",
-      "mensual": [10, 30, 55, 15, 15, 5]
+      "id": "cerro-mirador", "nombre": "Cerro Mirador (Punta Arenas)", "lat": -53.1500, "lon": -70.9167, 
+      "estado": "optimo", "tiempoReal": true, "temperatura": -4, "cm_nieve": 40, "precipitacion": "Viento y Nieve", 
+      "pistas": "70% abiertas", "camino": "Precaución viento blanco", 
+      "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80",
+      "mensual": [15, 45, 80, 40, 25, 10]
+    },
+    { 
+      "id": "el-fraile", "nombre": "El Fraile (Coyhaique)", "lat": -45.5750, "lon": -72.0662, 
+      "estado": "optimo", "tiempoReal": true, "temperatura": -3, "cm_nieve": 55, "precipitacion": "Nieve", 
+      "pistas": "80% abiertas", "camino": "Transitable con cadenas", 
+      "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
+      "mensual": [20, 55, 95, 55, 35, 15]
     }
   ]
 };
@@ -125,29 +179,35 @@ function calcularPosiciones(centros) {
     return lista.map((centro) => {
       let x = 0, z = 0;
       switch(centro.id) {
-        case "portillo": x = -0.2; z = -2.2; break;
-        case "valle-nevado": x = 0.2; z = -1.2; break;
-        case "el-colorado": x = 0.4; z = -1.0; break;
-        case "la-parva": x = 0.5; z = -0.8; break;
-        case "nevados-chillan": x = -0.3; z = 1.2; break;
-        case "corralco": x = -0.5; z = 2.2; break;
-        case "pucon": x = -0.8; z = 3.2; break;
-        case "antillanca": x = -1.1; z = 4.2; break;
-        case "volcan-osorno": x = -1.3; z = 4.8; break;
+        case "portillo": x = -0.2; z = -3.2; break;
+        case "el-colorado": x = 0.4; z = -2.4; break;
+        case "valle-nevado": x = 0.2; z = -1.9; break;
+        case "la-parva": x = 0.5; z = -1.5; break;
+        case "lagunillas": x = 0.3; z = -0.9; break;
+        case "chapa-verde": x = 0.6; z = -0.3; break;
+        case "nevados-chillan": x = -0.3; z = 0.6; break;
+        case "antuco": x = -0.4; z = 1.3; break;
+        case "corralco": x = -0.5; z = 1.9; break;
+        case "las-araucarias": x = -0.6; z = 2.4; break;
+        case "pucon": x = -0.8; z = 3.0; break;
+        case "antillanca": x = -1.0; z = 3.7; break;
+        case "volcan-osorno": x = -1.2; z = 4.4; break;
+        case "el-fraile": x = -1.4; z = 5.2; break;
+        case "cerro-mirador": x = -1.6; z = 6.0; break;
       }
       return { ...centro, x, z };
     });
   } else {
     const ordenados = [...lista].sort((a, b) => b.cm_nieve - a.cm_nieve);
-    const columnas = 3;
-    const separacion = 2.0;
+    const columnas = 4;
+    const separacion = 1.8;
     return ordenados.map((centro, indice) => {
       const columna = indice % columnas;
       const fila = Math.floor(indice / columnas);
       return {
         ...centro,
         x: (columna - columnas / 2 + 0.5) * separacion,
-        z: (fila - 1) * separacion,
+        z: (fila - 2) * separacion,
       };
     });
   }
@@ -161,54 +221,46 @@ function generarRepresentacion() {
   centrosEsqui.forEach(crearModuloLinea);
 
   if (parametros.modo === "geografico") {
-    crearCordilleraCapasIntercaladas();
+    crearCordilleraLineasOptimizada2026();
   }
 }
 
-function crearCordilleraCapasIntercaladas() {
-  const numCapasPrincipales = 36;
+// Cordillera con 75 capas (+20%) y opacidad 0.72 (20% más transparente que 0.9)
+function crearCordilleraLineasOptimizada2026() {
+  const numCapas = 75; // Aumentado en un 20% (de 63 a 75)
   
-  for (let i = 0; i < numCapasPrincipales; i++) {
-    const pasosCapa = [0, 0.5];
+  for (let i = 0; i < numCapas; i++) {
+    const zOffset = -7.0 + (i * (14.5 / numCapas));
+    const puntosLinea = [];
     
-    pasosCapa.forEach(offsetMedio => {
-      const indexTotal = i + offsetMedio;
-      const zOffset = -5.6 + (indexTotal * (11.2 / numCapasPrincipales));
-      const puntosCurva = [];
+    for (let x = -3.0; x <= 3.0; x += 0.1) {
+      let altimetria = Math.abs(Math.sin(x * 1.1 + i * 0.08) * Math.cos(x * 0.38 - zOffset * 0.14)) * 2.0;
+      altimetria += Math.sin(x * 2.2 + i * 0.05) * 0.2;
       
-      for (let x = -2.6; x <= 2.6; x += 0.1) {
-        let altimetria = Math.abs(Math.sin(x * 1.3 + indexTotal * 0.12) * Math.cos(x * 0.45 - zOffset * 0.18)) * 1.85;
-        altimetria += Math.sin(x * 2.8 + indexTotal * 0.08) * 0.25;
-        
-        let factorAtenuacion = Math.max(0, 1 - Math.abs(x) / 2.6);
-        let y = Math.max(0.15, altimetria * factorAtenuacion + (indexTotal * 0.032));
-        
-        puntosCurva.push(new THREE.Vector3(x, y, zOffset + (Math.sin(x * 2.2) * 0.08)));
-      }
+      let factorAtenuacion = Math.max(0, 1 - Math.abs(x) / 3.0);
+      let y = Math.max(0.15, altimetria * factorAtenuacion + (i * 0.017));
+      
+      puntosLinea.push(new THREE.Vector3(x, y, zOffset + (Math.sin(x * 1.8) * 0.08)));
+    }
 
-      const curva3D = new THREE.CatmullRomCurve3(puntosCurva);
-      const geometriaTubo = new THREE.TubeGeometry(curva3D, 64, 0.014, 8, false);
+    const geometria = new THREE.BufferGeometry().setFromPoints(puntosLinea);
+    const factorAltura = i / numCapas; // Verde abajo, blanco arriba
 
-      const factorAlturaCapa = THREE.MathUtils.clamp(indexTotal / numCapasPrincipales, 0, 1);
-      const colorCapa = new THREE.Color().lerpColors(
-        new THREE.Color(0x76ab72),
-        new THREE.Color(0xffffff),
-        factorAlturaCapa
-      );
+    const colorLinea = new THREE.Color().lerpColors(
+      new THREE.Color(0x76ab72), // Verde natural abajo
+      new THREE.Color(0xffffff), // Blanco brillante arriba
+      factorAltura
+    );
 
-      const opacidadBase = offsetMedio === 0 ? 0.3 : 0.2;
-
-      const materialTubo = new THREE.MeshStandardMaterial({
-        color: colorCapa,
-        roughness: 0.4,
-        metalness: 0.2,
-        transparent: true,
-        opacity: opacidadBase + (factorAlturaCapa * 0.1)
-      });
-
-      const mallaTubo = new THREE.Mesh(geometriaTubo, materialTubo);
-      grupoTopografia.add(mallaTubo);
+    const material = new THREE.LineBasicMaterial({
+      color: colorLinea,
+      transparent: true,
+      opacity: 0.72, // 20% más transparente que 0.9
+      linewidth: 1.2
     });
+
+    const linea = new THREE.Line(geometria, material);
+    grupoTopografia.add(linea);
   }
 }
 
@@ -216,7 +268,6 @@ function crearModuloLinea(centro) {
   const grupo = new THREE.Group();
   grupo.position.set(centro.x, 0, centro.z);
   grupo.userData.centro = centro;
-  grupo.userData.baseY = 0;
 
   let nieveActual = centro.cm_nieve;
   if (parametros.mesSeleccionado !== "actual" && centro.mensual) {
@@ -226,32 +277,39 @@ function crearModuloLinea(centro) {
 
   const alturaCentro = Math.max(0.6, nieveActual / 25);
   const esOptimo = centro.estado === "optimo";
-  const colorCopo = esOptimo ? 0x61afef : 0xe06c75;
+  
+  let colorEsfera = esOptimo ? 0xffffff : 0xff4d4d;
+  let colorEmissive = esOptimo ? 0x61afef : 0xff0000;
+  let intensidadEmissive = 0.8;
 
-  // Esfera 30% más pequeña (radio 0.175 en vez de 0.25) y luminosa (emissive alta)
+  if (centro.tiempoReal && esOptimo) {
+    colorEsfera = 0x61afef;
+    colorEmissive = 0x00aaff;
+    intensidadEmissive = 1.3;
+  }
+
   const geomEsferaCentro = new THREE.SphereGeometry(0.175, 24, 24);
   const matEsferaCentro = new THREE.MeshStandardMaterial({
-    color: esOptimo ? 0xffffff : 0xff4d4d,
+    color: colorEsfera,
     roughness: 0.2,
     metalness: 0.3,
     transparent: true,
-    opacity: 0.85,
-    emissive: esOptimo ? 0x61afef : 0xff0000,
-    emissiveIntensity: 0.8 // Efecto luminoso brillante
+    opacity: 0.88,
+    emissive: colorEmissive,
+    emissiveIntensity: intensidadEmissive
   });
   const mallaCentro = new THREE.Mesh(geomEsferaCentro, matEsferaCentro);
   mallaCentro.position.y = alturaCentro;
   mallaCentro.userData.centro = centro;
   grupo.add(mallaCentro);
 
-  // Copo geométrico flotando y animado encima
   const grupoCopo = new THREE.Group();
   grupoCopo.position.y = alturaCentro + 0.35;
 
   const matCopo = new THREE.MeshStandardMaterial({
-    color: colorCopo,
+    color: centro.tiempoReal ? 0x61afef : colorEsfera,
     roughness: 0.2,
-    emissive: colorCopo,
+    emissive: centro.tiempoReal ? 0x61afef : colorEsfera,
     emissiveIntensity: 0.9,
   });
 
@@ -269,12 +327,11 @@ function crearModuloLinea(centro) {
   grupoCopo.userData.centro = centro;
   grupo.add(grupoCopo);
 
-  // Guardar referencia para animación de flotación
   grupo.userData.offsetAnim = Math.random() * Math.PI * 2;
   gruposModulosAnimados.push(grupo);
 
   if (esOptimo && parametros.mostrarNieve) {
-    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0xffffff, 0.08);
+    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, centro.tiempoReal ? 0x61afef : 0xffffff, 0.08);
     sistemasNieveLocal.push(particulasNieve);
     escena.add(particulasNieve);
   }
@@ -312,8 +369,7 @@ function crearParticulasClima(posX, posZ, alturaTecho, colorHex, tamano, esLluvi
 function actualizarAnimaciones() {
   const tiempo = Date.now() * 0.003;
   
-  // Animar flotación de las esferas luminosas y sus copos
-  gruposModulosAnimados.forEach((grupo, idx) => {
+  gruposModulosAnimados.forEach((grupo) => {
     grupo.position.y = Math.sin(tiempo * 1.5 + grupo.userData.offsetAnim) * 0.08;
     const copoHijo = grupo.children[1];
     if (copoHijo) {
@@ -401,7 +457,8 @@ renderer.domElement.addEventListener("mousemove", (event) => {
       tooltip.style.display = "block";
       tooltip.style.left = `${event.clientX + 12}px`;
       tooltip.style.top = `${event.clientY + 12}px`;
-      tooltip.textContent = objetoEncontrado.userData.centro.nombre;
+      let infoExtra = objetoEncontrado.userData.centro.tiempoReal ? " 🔵 [En Línea por Hora]" : "";
+      tooltip.textContent = objetoEncontrado.userData.centro.nombre + infoExtra;
       renderer.domElement.style.cursor = "pointer";
       return;
     }
@@ -433,7 +490,7 @@ function seleccionarCentroEsqui(centro) {
   centroSeleccionado = centro;
   centroActivoPopup = centro;
   document.querySelector("#estacion-nombre").textContent = centro.nombre;
-  document.querySelector("#m-estado").textContent = centro.estado.toUpperCase();
+  document.querySelector("#m-estado").textContent = centro.estado.toUpperCase() + (centro.tiempoReal ? " (En Línea 🟢)" : "");
   document.querySelector("#m-temp").textContent = centro.temperatura;
   
   let nieveMostrada = centro.cm_nieve;
@@ -443,7 +500,7 @@ function seleccionarCentroEsqui(centro) {
   }
 
   document.querySelector("#m-nieve").textContent = nieveMostrada;
-  document.querySelector("#m-precip").textContent = centro.precipitacion;
+  document.querySelector("#m-precip").textContent = centro.precipitacion + (centro.pistas ? ` | Pistas: ${centro.pistas}` : "");
   document.querySelector("#m-camino").textContent = centro.camino;
 
   const imgContainer = document.querySelector("#estacion-imagen-container");
@@ -472,7 +529,7 @@ function actualizarPopupGrafico(centro) {
   });
 
   tarjetaFlotanteUnica.innerHTML = `
-    <div class="card-title">${centro.nombre}</div>
+    <div class="card-title">${centro.nombre} ${centro.tiempoReal ? '<span>🔵</span>' : ''}</div>
     <div class="chart-container-grid">
       <svg class="line-chart-svg" viewBox="0 0 180 75">
         <line x1="10" y1="15" x2="170" y2="15" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
@@ -480,12 +537,12 @@ function actualizarPopupGrafico(centro) {
         <line x1="10" y1="45" x2="170" y2="45" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
         <line x1="10" y1="60" x2="170" y2="60" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
 
-        <polyline fill="none" stroke="#61afef" stroke-width="2.5" points="${points.join(' ')}" />
+        <polyline fill="none" stroke="${centro.tiempoReal ? '#61afef' : '#abb2bf'}" stroke-width="2.5" points="${points.join(' ')}" />
 
         ${valores.map((v, i) => {
           const px = i * 30 + 15;
           const py = 65 - (v / maxVal) * 50;
-          return `<circle cx="${px}" cy="${py}" r="3.5" fill="#61afef" />`;
+          return `<circle cx="${px}" cy="${py}" r="3.5" fill="${centro.tiempoReal ? '#61afef' : '#abb2bf'}" />`;
         }).join('')}
       </svg>
       <div class="chart-labels">
