@@ -65,7 +65,7 @@ const parametros = { modo: "geografico", mesSeleccionado: "actual", soloAbiertos
 let centrosEsqui = datosNieve.centros;
 let objetosCentros = [];
 let centroSeleccionado = null;
-let gruposCoposAnimados = [];
+let gruposModulosAnimados = [];
 let sistemasNieveLocal = [];
 let sistemasLluviaLocal = [];
 let tarjetaFlotanteUnica = null;
@@ -161,50 +161,54 @@ function generarRepresentacion() {
   centrosEsqui.forEach(crearModuloLinea);
 
   if (parametros.modo === "geografico") {
-    crearCordilleraCapasDeLineas();
+    crearCordilleraCapasIntercaladas();
   }
 }
 
-// Cordillera construida con múltiples capas de líneas azuladas en cascada (Estilo arte generativo)
-function crearCordilleraCapasDeLineas() {
-  const numCapas = 22; // Cantidad de líneas paralelas en profundidad (Eje Z)
+function crearCordilleraCapasIntercaladas() {
+  const numCapasPrincipales = 36;
   
-  for (let i = 0; i < numCapas; i++) {
-    const zOffset = -5.5 + (i * (11.0 / numCapas));
-    const puntosLinea = [];
+  for (let i = 0; i < numCapasPrincipales; i++) {
+    const pasosCapa = [0, 0.5];
     
-    // Generar puntos fluidos a lo largo del eje longitudinal (X)
-    for (let x = -2.5; x <= 2.5; x += 0.1) {
-      // Perfil de altimetría combinando funciones senoidales y armónicos para simular los Andes
-      let altimetria = Math.abs(Math.sin(x * 1.2 + i * 0.15) * Math.cos(x * 0.5 - zOffset * 0.2)) * 1.8;
-      altimetria += Math.sin(x * 3.0 + i * 0.1) * 0.3;
+    pasosCapa.forEach(offsetMedio => {
+      const indexTotal = i + offsetMedio;
+      const zOffset = -5.6 + (indexTotal * (11.2 / numCapasPrincipales));
+      const puntosCurva = [];
       
-      // Atenuar los bordes para que parezca una cordillera central acotada
-      let factorAtenuacion = Math.max(0, 1 - Math.abs(x) / 2.5);
-      let y = Math.max(0.1, altimetria * factorAtenuacion + (i * 0.04));
-      
-      puntosLinea.push(new THREE.Vector3(x, y, zOffset + (Math.sin(x * 2) * 0.1)));
-    }
+      for (let x = -2.6; x <= 2.6; x += 0.1) {
+        let altimetria = Math.abs(Math.sin(x * 1.3 + indexTotal * 0.12) * Math.cos(x * 0.45 - zOffset * 0.18)) * 1.85;
+        altimetria += Math.sin(x * 2.8 + indexTotal * 0.08) * 0.25;
+        
+        let factorAtenuacion = Math.max(0, 1 - Math.abs(x) / 2.6);
+        let y = Math.max(0.15, altimetria * factorAtenuacion + (indexTotal * 0.032));
+        
+        puntosCurva.push(new THREE.Vector3(x, y, zOffset + (Math.sin(x * 2.2) * 0.08)));
+      }
 
-    const geometriaLinea = new THREE.BufferGeometry().setFromPoints(puntosLinea);
-    
-    // Gradiente de color y opacidad: las líneas superiores más blancas y brillantes, las inferiores más azuladas
-    const opacidadCapa = 0.3 + (i / numCapas) * 0.5;
-    const colorCapa = new THREE.Color().lerpColors(
-      new THREE.Color(0x2152ff), // Azul profundo abajo
-      new THREE.Color(0x61afef), // Azul claro / blanco arriba
-      i / numCapas
-    );
+      const curva3D = new THREE.CatmullRomCurve3(puntosCurva);
+      const geometriaTubo = new THREE.TubeGeometry(curva3D, 64, 0.014, 8, false);
 
-    const materialLinea = new THREE.LineBasicMaterial({
-      color: colorCapa,
-      transparent: true,
-      opacity: opacidadCapa,
-      linewidth: 1.5
+      const factorAlturaCapa = THREE.MathUtils.clamp(indexTotal / numCapasPrincipales, 0, 1);
+      const colorCapa = new THREE.Color().lerpColors(
+        new THREE.Color(0x76ab72),
+        new THREE.Color(0xffffff),
+        factorAlturaCapa
+      );
+
+      const opacidadBase = offsetMedio === 0 ? 0.3 : 0.2;
+
+      const materialTubo = new THREE.MeshStandardMaterial({
+        color: colorCapa,
+        roughness: 0.4,
+        metalness: 0.2,
+        transparent: true,
+        opacity: opacidadBase + (factorAlturaCapa * 0.1)
+      });
+
+      const mallaTubo = new THREE.Mesh(geometriaTubo, materialTubo);
+      grupoTopografia.add(mallaTubo);
     });
-
-    const lineaCordillera = new THREE.Line(geometriaLinea, materialLinea);
-    grupoTopografia.add(lineaCordillera);
   }
 }
 
@@ -212,6 +216,7 @@ function crearModuloLinea(centro) {
   const grupo = new THREE.Group();
   grupo.position.set(centro.x, 0, centro.z);
   grupo.userData.centro = centro;
+  grupo.userData.baseY = 0;
 
   let nieveActual = centro.cm_nieve;
   if (parametros.mesSeleccionado !== "actual" && centro.mensual) {
@@ -223,15 +228,16 @@ function crearModuloLinea(centro) {
   const esOptimo = centro.estado === "optimo";
   const colorCopo = esOptimo ? 0x61afef : 0xe06c75;
 
-  // Esfera principal del centro (Celeste si óptimo, Roja si cerrado)
-  const geomEsferaCentro = new THREE.SphereGeometry(0.25, 16, 16);
+  // Esfera 30% más pequeña (radio 0.175 en vez de 0.25) y luminosa (emissive alta)
+  const geomEsferaCentro = new THREE.SphereGeometry(0.175, 24, 24);
   const matEsferaCentro = new THREE.MeshStandardMaterial({
     color: esOptimo ? 0xffffff : 0xff4d4d,
-    roughness: 0.3,
+    roughness: 0.2,
+    metalness: 0.3,
     transparent: true,
-    opacity: 0.8,
-    emissive: colorCopo,
-    emissiveIntensity: 0.6
+    opacity: 0.85,
+    emissive: esOptimo ? 0x61afef : 0xff0000,
+    emissiveIntensity: 0.8 // Efecto luminoso brillante
   });
   const mallaCentro = new THREE.Mesh(geomEsferaCentro, matEsferaCentro);
   mallaCentro.position.y = alturaCentro;
@@ -240,21 +246,21 @@ function crearModuloLinea(centro) {
 
   // Copo geométrico flotando y animado encima
   const grupoCopo = new THREE.Group();
-  grupoCopo.position.y = alturaCentro + 0.45;
+  grupoCopo.position.y = alturaCentro + 0.35;
 
   const matCopo = new THREE.MeshStandardMaterial({
     color: colorCopo,
-    roughness: 0.3,
+    roughness: 0.2,
     emissive: colorCopo,
-    emissiveIntensity: 0.7,
+    emissiveIntensity: 0.9,
   });
 
-  const geoHex = new THREE.BoxGeometry(0.12, 0.04, 0.12);
+  const geoHex = new THREE.BoxGeometry(0.1, 0.03, 0.1);
   const hex = new THREE.Mesh(geoHex, matCopo);
   grupoCopo.add(hex);
 
   for (let i = 0; i < 3; i++) {
-    const brazoGeo = new THREE.BoxGeometry(0.4, 0.03, 0.06);
+    const brazoGeo = new THREE.BoxGeometry(0.32, 0.025, 0.05);
     const brazo = new THREE.Mesh(brazoGeo, matCopo);
     brazo.rotation.y = (i * Math.PI) / 3;
     grupoCopo.add(brazo);
@@ -262,16 +268,19 @@ function crearModuloLinea(centro) {
 
   grupoCopo.userData.centro = centro;
   grupo.add(grupoCopo);
-  gruposCoposAnimados.push(grupoCopo);
+
+  // Guardar referencia para animación de flotación
+  grupo.userData.offsetAnim = Math.random() * Math.PI * 2;
+  gruposModulosAnimados.push(grupo);
 
   if (esOptimo && parametros.mostrarNieve) {
-    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.3, 0xffffff, 0.08);
+    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0xffffff, 0.08);
     sistemasNieveLocal.push(particulasNieve);
     escena.add(particulasNieve);
   }
 
   if (centro.precipitacion.toLowerCase().includes("lluvia") && parametros.mostrarLluvia) {
-    const particulasLluvia = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.3, 0x61afef, 0.07, true);
+    const particulasLluvia = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0x61afef, 0.07, true);
     sistemasLluviaLocal.push(particulasLluvia);
     escena.add(particulasLluvia);
   }
@@ -303,9 +312,13 @@ function crearParticulasClima(posX, posZ, alturaTecho, colorHex, tamano, esLluvi
 function actualizarAnimaciones() {
   const tiempo = Date.now() * 0.003;
   
-  gruposCoposAnimados.forEach((copo, idx) => {
-    copo.position.y += Math.sin(tiempo * 2 + idx) * 0.002;
-    copo.rotation.y += 0.01;
+  // Animar flotación de las esferas luminosas y sus copos
+  gruposModulosAnimados.forEach((grupo, idx) => {
+    grupo.position.y = Math.sin(tiempo * 1.5 + grupo.userData.offsetAnim) * 0.08;
+    const copoHijo = grupo.children[1];
+    if (copoHijo) {
+      copoHijo.rotation.y += 0.015;
+    }
   });
 
   if (centroActivoPopup && tarjetaFlotanteUnica) {
@@ -315,7 +328,7 @@ function actualizarAnimaciones() {
       if (idxMes !== -1) nieveActual = centroActivoPopup.mensual[idxMes];
     }
     const alturaCentro = Math.max(0.6, nieveActual / 25);
-    const pos3D = new THREE.Vector3(centroActivoPopup.x, alturaCentro + 0.9, centroActivoPopup.z);
+    const pos3D = new THREE.Vector3(centroActivoPopup.x, alturaCentro + 0.8, centroActivoPopup.z);
     
     pos3D.project(camara);
     const x = (pos3D.x * .5 + .5) * viewport.clientWidth;
@@ -344,7 +357,7 @@ function actualizarAnimaciones() {
 
 function limpiarRepresentacion() {
   objetosCentros = [];
-  gruposCoposAnimados = [];
+  gruposModulosAnimados = [];
   sistemasNieveLocal.forEach(s => escena.remove(s));
   sistemasNieveLocal = [];
   sistemasLluviaLocal.forEach(s => escena.remove(s));
