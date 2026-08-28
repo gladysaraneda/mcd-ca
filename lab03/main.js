@@ -7,71 +7,73 @@ const datosNieve = {
     { 
       "id": "valle-nevado", "nombre": "Valle Nevado", "lat": -33.3567, "lon": -70.2528, 
       "estado": "optimo", "temperatura": -2, "cm_nieve": 45, "precipitacion": "Nieve ligera", 
-      "camino": "Obligatorio uso de cadenas (Curva 17 en adelante)", 
-      "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80" 
+      "camino": "Obligatorio uso de cadenas", "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80",
+      "mensual": [20, 55, 90, 45, 30, 15]
     },
     { 
       "id": "el-colorado", "nombre": "El Colorado", "lat": -33.3444, "lon": -70.2889, 
       "estado": "optimo", "temperatura": -3, "cm_nieve": 40, "precipitacion": "Nevando", 
-      "camino": "Cadenas obligatorias", 
-      "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80" 
+      "camino": "Cadenas obligatorias", "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
+      "mensual": [15, 50, 85, 40, 25, 10]
     },
     { 
       "id": "la-parva", "nombre": "La Parva", "lat": -33.3333, "lon": -70.2833, 
       "estado": "cerrado", "temperatura": 1, "cm_nieve": 10, "precipitacion": "Lluvia débil", 
-      "camino": "Camino transitable con precaución", 
-      "imagen": "https://images.unsplash.com/photo-1482867665717-f371a3372991?auto=format&fit=crop&w=600&q=80" 
+      "camino": "Camino con precaución", "imagen": "https://images.unsplash.com/photo-1482867665717-f371a3372991?auto=format&fit=crop&w=600&q=80",
+      "mensual": [5, 20, 40, 10, 10, 5]
     },
     { 
       "id": "portillo", "nombre": "Portillo", "lat": -32.8361, "lon": -70.1389, 
       "estado": "optimo", "temperatura": -4, "cm_nieve": 60, "precipitacion": "Nieve intensa", 
-      "camino": "Cadenas obligatorias (Ruta CH-60)", 
-      "imagen": "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&fit=crop&w=600&q=80" 
+      "camino": "Cadenas obligatorias (Ruta 60)", "imagen": "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&fit=crop&w=600&q=80",
+      "mensual": [30, 70, 110, 60, 40, 20]
     },
     { 
       "id": "nevados-chillan", "nombre": "Nevados de Chillán", "lat": -36.9083, "lon": -71.4083, 
       "estado": "optimo", "temperatura": -1, "cm_nieve": 80, "precipitacion": "Nieve moderada", 
-      "camino": "Transitable con cadenas (Portación obligatoria)", 
-      "imagen": "https://images.unsplash.com/photo-1605540436563-5bca919ae766?auto=format&fit=crop&w=600&q=80" 
+      "camino": "Transitable con cadenas", "imagen": "https://images.unsplash.com/photo-1605540436563-5bca919ae766?auto=format&fit=crop&w=600&q=80",
+      "mensual": [40, 90, 140, 80, 55, 30]
     },
     { 
       "id": "pucon", "nombre": "Pucón (Villarrica)", "lat": -39.4200, "lon": -71.9300, 
       "estado": "optimo", "temperatura": -2, "cm_nieve": 70, "precipitacion": "Lluvia y Nieve", 
-      "camino": "Transitable con precaución (Subida al centro)", 
-      "imagen": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80" 
+      "camino": "Transitable con precaución", "imagen": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
+      "mensual": [35, 80, 120, 70, 45, 25]
     },
     { 
       "id": "antillanca", "nombre": "Antillanca", "lat": -40.7667, "lon": -72.1833, 
       "estado": "optimo", "temperatura": -2, "cm_nieve": 50, "precipitacion": "Nieve", 
-      "camino": "Uso de cadenas requerido", 
-      "imagen": "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80" 
+      "camino": "Uso de cadenas requerido", "imagen": "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80",
+      "mensual": [25, 60, 95, 50, 35, 15]
     },
     { 
       "id": "volcan-osorno", "nombre": "Volcán Osorno", "lat": -41.1000, "lon": -72.5000, 
       "estado": "optimo", "temperatura": -3, "cm_nieve": 65, "precipitacion": "Nieve ligera", 
-      "camino": "Cadenas recomendadas por acumulación", 
-      "imagen": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80" 
+      "camino": "Cadenas recomendadas", "imagen": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
+      "mensual": [30, 75, 115, 65, 40, 20]
     },
     { 
       "id": "corralco", "nombre": "Corralco", "lat": -38.4236, "lon": -71.5644, 
       "estado": "cerrado", "temperatura": 2, "cm_nieve": 15, "precipitacion": "Lluvia", 
-      "camino": "Transitable", 
-      "imagen": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=600&q=80" 
+      "camino": "Transitable", "imagen": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=600&q=80",
+      "mensual": [10, 30, 55, 15, 15, 5]
     }
   ]
 };
 
-const parametros = { modo: "geografico", mostrarNieve: true, mostrarLluvia: true };
+const parametros = { modo: "geografico", mesSeleccionado: "actual", soloAbiertos: false, mostrarNieve: true, mostrarLluvia: true };
 let centrosEsqui = datosNieve.centros;
 let objetosCentros = [];
 let centroSeleccionado = null;
+let gruposCoposAnimados = [];
 let sistemasNieveLocal = [];
 let sistemasLluviaLocal = [];
-let iconosEsquiadores = [];
+let tarjetaFlotanteUnica = null;
+let centroActivoPopup = null;
 
 const viewport = document.querySelector("#viewport");
 const escena = new THREE.Scene();
-escena.background = new THREE.Color(0x0a192f); // Azul profundo tipo diseño isométrico de montaña
+escena.background = new THREE.Color(0x0b0b0c);
 
 const camara = new THREE.PerspectiveCamera(42, viewport.clientWidth / viewport.clientHeight, 0.1, 300);
 camara.position.set(0, 24, 20);
@@ -91,7 +93,7 @@ const luzPrincipal = new THREE.DirectionalLight(0xffffff, 2.7);
 luzPrincipal.position.set(18, 28, 14);
 escena.add(luzPrincipal);
 
-// Tooltip flotante
+// Tooltip flotante simple para hover
 const tooltip = document.createElement("div");
 tooltip.style.position = "absolute";
 tooltip.style.background = "rgba(0, 0, 0, 0.85)";
@@ -106,12 +108,23 @@ document.body.appendChild(tooltip);
 
 const grupoCentros = new THREE.Group();
 escena.add(grupoCentros);
-const grupoMapaChile = new THREE.Group();
-escena.add(grupoMapaChile);
+const grupoTopografia = new THREE.Group();
+escena.add(grupoTopografia);
+
+// Crear tarjeta flotante única (popup) para el centro seleccionado
+tarjetaFlotanteUnica = document.createElement("div");
+tarjetaFlotanteUnica.className = "centro-card-flotante";
+tarjetaFlotanteUnica.style.display = "none";
+document.body.appendChild(tarjetaFlotanteUnica);
 
 function calcularPosiciones(centros) {
+  let lista = centros;
+  if (parametros.soloAbiertos) {
+    lista = centros.filter(c => c.estado === "optimo");
+  }
+
   if (parametros.modo === "geografico") {
-    return centros.map((centro) => {
+    return lista.map((centro) => {
       let x = 0, z = 0;
       switch(centro.id) {
         case "portillo": x = -0.2; z = -2.2; break;
@@ -127,7 +140,7 @@ function calcularPosiciones(centros) {
       return { ...centro, x, z };
     });
   } else {
-    const ordenados = [...centros].sort((a, b) => b.cm_nieve - a.cm_nieve);
+    const ordenados = [...lista].sort((a, b) => b.cm_nieve - a.cm_nieve);
     const columnas = 3;
     const separacion = 2.0;
     return ordenados.map((centro, indice) => {
@@ -147,66 +160,81 @@ function generarRepresentacion() {
   const distribuidos = calcularPosiciones(centrosEsqui);
   centrosEsqui = distribuidos;
 
-  centrosEsqui.forEach(crearModuloCopo);
+  centrosEsqui.forEach(crearModuloEsferico);
 
   if (parametros.modo === "geografico") {
-    crearMapaChileMontanas();
+    crearCordilleraDeEsferasOptimizada();
   }
 }
 
-// Generar el mapa de Chile formado por relieve de pequeñas montañas y pinos (estilo diorama isométrico)
-function crearMapaChileMontanas() {
-  const geomPico = new THREE.ConeGeometry(0.25, 0.45, 4);
-  const matPico = new THREE.MeshStandardMaterial({
-    color: 0xe6edf3, // Blanco nevado
-    roughness: 0.6,
-    metalness: 0.1
+// Cordillera optimizada con menor carga poligonal para mantener el rendimiento fluido
+function crearCordilleraDeEsferasOptimizada() {
+  const geomEsfera = new THREE.SphereGeometry(0.12, 8, 8);
+  const matEsfera = new THREE.MeshStandardMaterial({
+    color: 0xffffff,
+    roughness: 0.7,
+    metalness: 0.1,
+    transparent: true,
+    opacity: 0.4
   });
 
-  const offsetsChile = [
-    {x: -0.4, z: -5.5}, {x: -0.2, z: -5.5}, {x: 0.0, z: -5.2},
-    {x: -0.3, z: -4.8}, {x: -0.1, z: -4.8}, {x: 0.2, z: -4.5},
-    {x: -0.2, z: -4.2}, {x: 0.1, z: -4.2}, {x: 0.3, z: -3.8},
-    {x: -0.1, z: -3.5}, {x: 0.2, z: -3.5}, {x: 0.4, z: -3.2},
-    {x: -0.2, z: -2.8}, {x: 0.1, z: -2.8}, {x: 0.3, z: -2.5},
-    {x: -0.2, z: -2.2}, {x: 0.1, z: -2.2}, {x: 0.3, z: -2.0},
-    {x: -0.3, z: -1.5}, {x: 0.0, z: -1.5}, {x: 0.2, z: -1.5}, {x: 0.4, z: -1.2},
-    {x: -0.2, z: -0.8}, {x: 0.1, z: -0.8}, {x: 0.3, z: -0.5},
-    {x: -0.4, z: 0.0}, {x: -0.1, z: 0.0}, {x: 0.2, z: 0.2},
-    {x: -0.5, z: 0.6}, {x: -0.2, z: 0.6}, {x: 0.1, z: 0.8},
-    {x: -0.4, z: 1.2}, {x: -0.2, z: 1.2}, {x: 0.1, z: 1.5},
-    {x: -0.6, z: 1.8}, {x: -0.3, z: 1.8}, {x: 0.0, z: 2.0},
-    {x: -0.7, z: 2.2}, {x: -0.4, z: 2.5}, {x: -0.1, z: 2.5},
-    {x: -0.8, z: 3.0}, {x: -0.5, z: 3.0}, {x: -0.2, z: 3.2},
-    {x: -0.9, z: 3.5}, {x: -0.6, z: 3.8}, {x: -0.3, z: 4.0},
-    {x: -1.1, z: 4.2}, {x: -0.8, z: 4.5}, {x: -0.5, z: 4.8},
-    {x: -1.3, z: 4.8}, {x: -1.0, z: 5.2}, {x: -0.7, z: 5.5},
-    {x: -0.8, z: 6.0}, {x: -0.5, z: 6.2}, {x: -0.3, z: 6.5}
-  ];
+  const offsetsCordillera = [];
+  for (let z = -5.8; z <= 6.8; z += 0.3) {
+    let centroX = Math.sin(z * 0.4) * 0.4 - 0.1;
+    if (z > 2.5) centroX -= (z - 2.5) * 0.2;
+    
+    for (let x = centroX - 0.55; x <= centroX + 0.55; x += 0.3) {
+      const altimetria = Math.abs(Math.sin(x * 2.5) * Math.cos(z * 1.2)) * 1.5 + 0.2;
+      offsetsCordillera.push({ x: x, z: z, y: altimetria });
+    }
+  }
 
-  offsetsChile.forEach(pos => {
-    const montana = new THREE.Mesh(geomPico, matPico);
-    montana.position.set(pos.x, 0.05, pos.z);
-    grupoMapaChile.add(montana);
+  offsetsCordillera.forEach(pos => {
+    const esfera = new THREE.Mesh(geomEsfera, matEsfera);
+    const escalaAlt = Math.max(0.6, pos.y * 0.9);
+    esfera.scale.set(escalaAlt, escalaAlt, escalaAlt);
+    esfera.position.set(pos.x, pos.y, pos.z);
+    grupoTopografia.add(esfera);
   });
 }
 
-function crearModuloCopo(centro) {
+function crearModuloEsferico(centro) {
   const grupo = new THREE.Group();
   grupo.position.set(centro.x, 0, centro.z);
   grupo.userData.centro = centro;
 
+  let nieveActual = centro.cm_nieve;
+  if (parametros.mesSeleccionado !== "actual" && centro.mensual) {
+    const idxMes = ["mayo", "junio", "julio", "agosto", "septiembre", "octubre"].indexOf(parametros.mesSeleccionado);
+    if (idxMes !== -1) nieveActual = centro.mensual[idxMes];
+  }
+
+  const alturaCentro = Math.max(0.6, nieveActual / 25);
   const esOptimo = centro.estado === "optimo";
   const colorCopo = esOptimo ? 0x61afef : 0xe06c75;
 
+  const geomEsferaCentro = new THREE.SphereGeometry(0.25, 16, 16);
+  const matEsferaCentro = new THREE.MeshStandardMaterial({
+    color: esOptimo ? 0xffffff : 0xff4d4d,
+    roughness: 0.3,
+    transparent: true,
+    opacity: 0.7,
+    emissive: colorCopo,
+    emissiveIntensity: 0.5
+  });
+  const mallaCentro = new THREE.Mesh(geomEsferaCentro, matEsferaCentro);
+  mallaCentro.position.y = alturaCentro;
+  mallaCentro.userData.centro = centro;
+  grupo.add(mallaCentro);
+
   const grupoCopo = new THREE.Group();
-  grupoCopo.position.y = 0.35;
+  grupoCopo.position.y = alturaCentro + 0.45;
 
   const matCopo = new THREE.MeshStandardMaterial({
     color: colorCopo,
     roughness: 0.3,
     emissive: colorCopo,
-    emissiveIntensity: 0.4,
+    emissiveIntensity: 0.7,
   });
 
   const geoHex = new THREE.BoxGeometry(0.12, 0.04, 0.12);
@@ -220,66 +248,34 @@ function crearModuloCopo(centro) {
     grupoCopo.add(brazo);
   }
 
-  const factorEscala = Math.max(0.6, centro.cm_nieve / 100);
-  grupoCopo.scale.set(factorEscala, factorEscala, factorEscala);
   grupoCopo.userData.centro = centro;
   grupo.add(grupoCopo);
-
-  if (esOptimo) {
-    const esquiador = crearIconoEsquiadorEstilizado();
-    esquiador.position.set(0, 0.75, 0);
-    grupo.add(esquiador);
-    iconosEsquiadores.push(esquiador);
-  }
+  gruposCoposAnimados.push(grupoCopo);
 
   if (esOptimo && parametros.mostrarNieve) {
-    const particulasNieve = crearParticulasClima(centro.x, centro.z, 0xffffff, 0.08);
+    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.3, 0xffffff, 0.08);
     sistemasNieveLocal.push(particulasNieve);
     escena.add(particulasNieve);
   }
 
   if (centro.precipitacion.toLowerCase().includes("lluvia") && parametros.mostrarLluvia) {
-    const particulasLluvia = crearParticulasClima(centro.x, centro.z, 0x61afef, 0.07, true);
+    const particulasLluvia = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.3, 0x61afef, 0.07, true);
     sistemasLluviaLocal.push(particulasLluvia);
     escena.add(particulasLluvia);
   }
 
   grupoCentros.add(grupo);
-  objetosCentros.push(grupoCopo);
+  objetosCentros.push(mallaCentro, grupoCopo);
 }
 
-function crearIconoEsquiadorEstilizado() {
-  const grupoEsquiador = new THREE.Group();
-  const matTraje = new THREE.MeshStandardMaterial({ color: 0x98c379, roughness: 0.3, emissive: 0x98c379, emissiveIntensity: 0.2 });
-  const matCasco = new THREE.MeshStandardMaterial({ color: 0x61afef, roughness: 0.2 });
-
-  const torso = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.14, 0.06), matTraje);
-  torso.position.set(0, 0.12, 0.02);
-  torso.rotation.x = 0.3;
-  grupoEsquiador.add(torso);
-
-  const casco = new THREE.Mesh(new THREE.SphereGeometry(0.05, 12, 12), matCasco);
-  casco.position.set(0, 0.21, 0.05);
-  grupoEsquiador.add(casco);
-
-  const tabla = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.02, 0.07), new THREE.MeshStandardMaterial({ color: 0xe06c75, roughness: 0.3 }));
-  tabla.position.set(0, 0.01, 0);
-  tabla.rotation.y = 0.4;
-  tabla.rotation.z = 0.15;
-  grupoEsquiador.add(tabla);
-
-  grupoEsquiador.scale.set(1.1, 1.1, 1.1);
-  return grupoEsquiador;
-}
-
-function crearParticulasClima(posX, posZ, colorHex, tamano, esLluvia = false) {
-  const cantidad = 12;
+function crearParticulasClima(posX, posZ, alturaTecho, colorHex, tamano, esLluvia = false) {
+  const cantidad = 10;
   const geom = new THREE.BufferGeometry();
   const posiciones = new Float32Array(cantidad * 3);
 
   for (let i = 0; i < cantidad * 3; i += 3) {
     posiciones[i] = posX + (Math.random() - 0.5) * 0.3;
-    posiciones[i + 1] = Math.random() * 1.0 + 0.3;
+    posiciones[i + 1] = alturaTecho + Math.random() * 0.8;
     posiciones[i + 2] = posZ + (Math.random() - 0.5) * 0.3;
   }
 
@@ -287,22 +283,49 @@ function crearParticulasClima(posX, posZ, colorHex, tamano, esLluvia = false) {
   const mat = new THREE.PointsMaterial({ color: colorHex, size: tamano, transparent: true, opacity: 0.85 });
   const puntos = new THREE.Points(geom, mat);
   puntos.userData.esLluvia = esLluvia;
+  puntos.userData.alturaBase = 0.2;
+  puntos.userData.alturaTecho = alturaTecho + 0.8;
   return puntos;
 }
 
 function actualizarAnimaciones() {
   const tiempo = Date.now() * 0.003;
-  iconosEsquiadores.forEach((ico, idx) => {
-    ico.position.y = 0.75 + Math.sin(tiempo + idx) * 0.05;
-    ico.rotation.y = Math.sin(tiempo * 0.4 + idx) * 0.25;
+  
+  gruposCoposAnimados.forEach((copo, idx) => {
+    copo.position.y += Math.sin(tiempo * 2 + idx) * 0.002;
+    copo.rotation.y += 0.01;
   });
+
+  // Actualizar posición de la tarjeta flotante (popup) del centro activo
+  if (centroActivoPopup && tarjetaFlotanteUnica) {
+    let nieveActual = centroActivoPopup.cm_nieve;
+    if (parametros.mesSeleccionado !== "actual" && centroActivoPopup.mensual) {
+      const idxMes = ["mayo", "junio", "julio", "agosto", "septiembre", "octubre"].indexOf(parametros.mesSeleccionado);
+      if (idxMes !== -1) nieveActual = centroActivoPopup.mensual[idxMes];
+    }
+    const alturaCentro = Math.max(0.6, nieveActual / 25);
+    const pos3D = new THREE.Vector3(centroActivoPopup.x, alturaCentro + 0.9, centroActivoPopup.z);
+    
+    pos3D.project(camara);
+    const x = (pos3D.x * .5 + .5) * viewport.clientWidth;
+    const y = (-(pos3D.y * .5 + .5) * viewport.clientHeight) + viewport.offsetTop;
+    
+    if (pos3D.z < 1) {
+      tarjetaFlotanteUnica.style.display = "block";
+      tarjetaFlotanteUnica.style.transform = `translate(-50%, -100%) translate(${x}px, ${y}px)`;
+    } else {
+      tarjetaFlotanteUnica.style.display = "none";
+    }
+  }
 
   [...sistemasNieveLocal, ...sistemasLluviaLocal].forEach(sistema => {
     const pos = sistema.geometry.attributes.position.array;
-    const velocidad = sistema.userData.esLluvia ? 0.06 : 0.03;
+    const velocidad = sistema.userData.esLluvia ? 0.05 : 0.025;
     for (let i = 1; i < pos.length; i += 3) {
       pos[i] -= velocidad;
-      if (pos[i] < 0) pos[i] = 1.3;
+      if (pos[i] < sistema.userData.alturaBase) {
+        pos[i] = sistema.userData.alturaTecho;
+      }
     }
     sistema.geometry.attributes.position.needsUpdate = true;
   });
@@ -310,7 +333,7 @@ function actualizarAnimaciones() {
 
 function limpiarRepresentacion() {
   objetosCentros = [];
-  iconosEsquiadores = [];
+  gruposCoposAnimados = [];
   sistemasNieveLocal.forEach(s => escena.remove(s));
   sistemasNieveLocal = [];
   sistemasLluviaLocal.forEach(s => escena.remove(s));
@@ -324,13 +347,13 @@ function limpiarRepresentacion() {
     });
     grupoCentros.remove(obj);
   }
-  while (grupoMapaChile.children.length > 0) {
-    const obj = grupoMapaChile.children[0];
+  while (grupoTopografia.children.length > 0) {
+    const obj = grupoTopografia.children[0];
     obj.traverse((hijo) => {
       if (hijo.geometry) hijo.geometry.dispose();
       if (hijo.material) hijo.material.dispose();
     });
-    grupoMapaChile.remove(obj);
+    grupoTopografia.remove(obj);
   }
 }
 
@@ -384,10 +407,18 @@ renderer.domElement.addEventListener("pointerdown", (event) => {
 
 function seleccionarCentroEsqui(centro) {
   centroSeleccionado = centro;
+  centroActivoPopup = centro;
   document.querySelector("#estacion-nombre").textContent = centro.nombre;
   document.querySelector("#m-estado").textContent = centro.estado.toUpperCase();
   document.querySelector("#m-temp").textContent = centro.temperatura;
-  document.querySelector("#m-nieve").textContent = centro.cm_nieve;
+  
+  let nieveMostrada = centro.cm_nieve;
+  if (parametros.mesSeleccionado !== "actual" && centro.mensual) {
+    const idxMes = ["mayo", "junio", "julio", "agosto", "septiembre", "octubre"].indexOf(parametros.mesSeleccionado);
+    if (idxMes !== -1) nieveMostrada = centro.mensual[idxMes];
+  }
+
+  document.querySelector("#m-nieve").textContent = nieveMostrada;
   document.querySelector("#m-precip").textContent = centro.precipitacion;
   document.querySelector("#m-camino").textContent = centro.camino;
 
@@ -400,7 +431,49 @@ function seleccionarCentroEsqui(centro) {
     imgContainer.style.display = "none";
   }
 
-  animarCamaraA({ x: centro.x, y: 1.5, z: centro.z + 1.5 }, { x: centro.x, y: 0, z: centro.z });
+  // Generar gráfico de líneas con retícula (estilo tu imagen de referencia) en la tarjeta pop-up
+  actualizarPopupGrafico(centro);
+
+  animarCamaraA({ x: centro.x, y: 3.5, z: centro.z + 3.0 }, { x: centro.x, y: 1.0, z: centro.z });
+}
+
+function actualizarPopupGrafico(centro) {
+  const meses = ["May", "Jun", "Jul", "Ago", "Sep", "Oct"];
+  const valores = centro.mensual || [0,0,0,0,0,0];
+  const maxVal = Math.max(...valores, 100);
+
+  // Coordenadas SVG para la línea curva con puntos
+  const points = valores.map((v, i) => {
+    const px = i * 32 + 15;
+    const py = 60 - (v / maxVal) * 45;
+    return `${px},${py}`;
+  });
+
+  tarjetaFlotanteUnica.innerHTML = `
+    <div class="card-title">${centro.nombre}</div>
+    <div class="chart-container-grid">
+      <svg class="line-chart-svg" viewBox="0 0 180 75">
+        <!-- Retícula de fondo (líneas horizontales estilo gráfico) -->
+        <line x1="10" y1="15" x2="170" y2="15" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+        <line x1="10" y1="30" x2="170" y2="30" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+        <line x1="10" y1="45" x2="170" y2="45" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+        <line x1="10" y1="60" x2="170" y2="60" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+
+        <!-- Línea curva de tendencia -->
+        <polyline fill="none" stroke="#61afef" stroke-width="2.5" points="${points.join(' ')}" />
+
+        <!-- Puntos de datos sobre la línea -->
+        ${valores.map((v, i) => {
+          const px = i * 32 + 15;
+          const py = 60 - (v / maxVal) * 45;
+          return `<circle cx="${px}" cy="${py}" r="3.5" fill="#61afef" />`;
+        }).join('')}
+      </svg>
+      <div class="chart-labels">
+        ${meses.map(m => `<span>${m}</span>`).join('')}
+      </div>
+    </div>
+  `;
 }
 
 function animarCamaraA(nuevaPosicion, nuevoTarget) {
@@ -433,6 +506,27 @@ document.querySelector("#btn-pucon").addEventListener("click", () => buscarYSele
 document.querySelector("#btn-antillanca").addEventListener("click", () => buscarYSeleccionar("antillanca"));
 document.querySelector("#btn-osorno").addEventListener("click", () => buscarYSeleccionar("volcan-osorno"));
 
+const btnEstado = document.querySelector("#toggle-estado");
+if (btnEstado) {
+  btnEstado.addEventListener("click", () => {
+    parametros.soloAbiertos = !parametros.soloAbiertos;
+    btnEstado.textContent = parametros.soloAbiertos ? "🟢 Todos los Centros" : "🟢 Solo Abiertos";
+    btnEstado.style.background = parametros.soloAbiertos ? "#e06c75" : "#98c379";
+    centroActivoPopup = null;
+    tarjetaFlotanteUnica.style.display = "none";
+    generarRepresentacion();
+  });
+}
+
+document.querySelector("#selector-mes").addEventListener("change", (event) => {
+  parametros.mesSeleccionado = event.target.value;
+  document.querySelector("#mes-label").textContent = event.target.options[event.target.selectedIndex].text;
+  generarRepresentacion();
+  if (centroSeleccionado) {
+    seleccionarCentroEsqui(centroSeleccionado);
+  }
+});
+
 const btnNieve = document.querySelector("#toggle-nieve");
 if (btnNieve) {
   btnNieve.addEventListener("click", () => {
@@ -455,6 +549,8 @@ if (btnLluvia) {
 
 document.querySelector("#modo-distribucion").addEventListener("change", (event) => {
   parametros.modo = event.target.value;
+  centroActivoPopup = null;
+  tarjetaFlotanteUnica.style.display = "none";
   generarRepresentacion();
 });
 
@@ -462,6 +558,8 @@ document.querySelector("#actualizar").addEventListener("click", () => generarRep
 
 document.querySelector("#restablecer-vista").addEventListener("click", () => {
   animarCamaraA({ x: 0, y: 24, z: 20 }, { x: 0, y: 0, z: 0 });
+  centroActivoPopup = null;
+  tarjetaFlotanteUnica.style.display = "none";
   document.querySelector("#estacion-nombre").textContent = "Selecciona un centro";
   document.querySelector("#m-estado").textContent = "--";
   document.querySelector("#m-temp").textContent = "--";

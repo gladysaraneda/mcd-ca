@@ -14,7 +14,7 @@
           <p class="eyebrow">COMPUTACIÓN AVANZADA · MCD UAI</p>
           <h1>Estado de Nieve en Chile</h1>
           <p class="subtitle">
-            Monitoreo territorial interactivo: caminos, cadenas, precipitaciones y estado de centros.
+            Monitoreo territorial interactivo: topografía cordillerana, acumulación estacional y clima.
           </p>
         </div>
       </header>
@@ -45,25 +45,43 @@
         <div style="font-size: 0.9rem; line-height: 1.6;">
           <p>Estado Operativo: <strong id="m-estado" style="color: #61afef;">--</strong></p>
           <p>Temperatura: <strong id="m-temp">--</strong> °C</p>
-          <p>Acumulación Nieve: <strong id="m-nieve">--</strong> cm</p>
+          <p>Acumulación Nieve (<span id="mes-label">Actual</span>): <strong id="m-nieve">--</strong> cm</p>
           <p>Precipitación: <strong id="m-precip">--</strong></p>
           <p>Camino / Cadenas: <strong id="m-camino" style="color: #e5c07b;">--</strong></p>
         </div>
       </section>
 
-      <!-- Filtros de Visualización (Prendido / Apagado de Fichas) -->
+      <!-- Filtros de Capas 3D y Estado Actual -->
       <section class="control-group">
-        <h3>Filtrar Capas 3D</h3>
-        <div style="display: flex; gap: 8px; margin-top: 6px;">
+        <h3>Filtrar Visualización</h3>
+        <div style="display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
+          <button id="toggle-estado" style="flex: 1; padding: 6px; font-size: 0.75rem; cursor: pointer; background: #98c379; border: none; color: #000; border-radius: 4px; font-weight: bold;">🟢 Solo Abiertos</button>
           <button id="toggle-nieve" style="flex: 1; padding: 6px; font-size: 0.75rem; cursor: pointer; background: #61afef; border: none; color: #fff; border-radius: 4px;">❄️ Nieve: ON</button>
           <button id="toggle-lluvia" style="flex: 1; padding: 6px; font-size: 0.75rem; cursor: pointer; background: #e06c75; border: none; color: #fff; border-radius: 4px;">🌧️ Lluvia: ON</button>
         </div>
       </section>
 
+      <!-- Selector Temporal de Nieve Acumulada (6 Meses) -->
+      <section class="control-group">
+        <h3>Línea Temporal (Temporada Invierno)</h3>
+        <label>
+          <span>Seleccionar Mes de Revisión</span>
+          <select id="selector-mes" style="width: 100%; padding: 6px; margin-top: 4px; background: #21252b; color: #fff; border: 1px solid #444; border-radius: 4px;">
+            <option value="actual">Mes Actual (Agosto)</option>
+            <option value="mayo">Mayo (Inicio Temporada)</option>
+            <option value="junio">Junio</option>
+            <option value="julio">Julio (Peak Histórico)</option>
+            <option value="agosto">Agosto</option>
+            <option value="septiembre">Septiembre</option>
+            <option value="octubre">Octubre (Cierre)</option>
+          </select>
+        </label>
+      </section>
+
       <!-- Botones de selección directa -->
       <section class="control-group">
         <h3>Selección Directa de Centros</h3>
-        <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 8px; max-height: 150px; overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 8px; max-height: 120px; overflow-y: auto;">
           <button id="btn-valle" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Valle Nevado</button>
           <button id="btn-portillo" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Portillo</button>
           <button id="btn-chillan" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Nevados de Chillán</button>
