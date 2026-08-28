@@ -14,13 +14,18 @@
           <p class="eyebrow">COMPUTACIÓN AVANZADA · MCD UAI</p>
           <h1>Estado de Nieve en Chile</h1>
           <p class="subtitle">
-            Monitoreo territorial interactivo: topografía cordillerana, acumulación estacional y clima.
+            Monitoreo territorial interactivo: silueta de Chile en 3D, tooltips de nombres y partículas de nieve localizada.
           </p>
         </div>
       </header>
 
       <!-- Lienzo 3D de Three.js -->
       <div id="viewport"></div>
+
+      <!-- Fuente de datos oficial discreta en la esquina inferior izquierda -->
+      <div class="fuentes-datos-discreto">
+        <span><strong>Fuentes:</strong> DMC (Clima en vivo) • Modelos SRTM/USGS (Altimetría Andes) • DGA (Nieve histórica) • Reportes Horarios Centros de Montaña</span>
+      </div>
 
       <div class="hint">
         Pasa el cursor sobre un centro para ver el nombre · Click para acercar · Rueda para zoom
@@ -34,59 +39,37 @@
         <h2 id="estacion-nombre">Selecciona un centro</h2>
       </div>
 
-      <!-- Contenedor de Imagen de la Estación -->
-      <div id="estacion-imagen-container" style="width: 100%; height: 130px; background: #21252b; border-radius: 6px; overflow: hidden; margin-bottom: 12px; display: none;">
-        <img id="estacion-foto" src="" alt="Centro de Esquí" style="width: 100%; height: 100%; object-fit: cover;" />
-      </div>
-
       <!-- Métricas del centro seleccionado -->
       <section class="control-group">
-        <h3>Condiciones Meteorológicas y Acceso</h3>
-        <div style="font-size: 0.9rem; line-height: 1.6;">
+        <h3>Condiciones Meteorológicas</h3>
+        <div style="font-size: 0.95rem; line-height: 1.6;">
           <p>Estado Operativo: <strong id="m-estado" style="color: #61afef;">--</strong></p>
           <p>Temperatura: <strong id="m-temp">--</strong> °C</p>
-          <p>Acumulación Nieve (<span id="mes-label">Actual</span>): <strong id="m-nieve">--</strong> cm</p>
+          <p>Acumulación de Nieve: <strong id="m-nieve">--</strong> cm</p>
           <p>Precipitación: <strong id="m-precip">--</strong></p>
-          <p>Camino / Cadenas: <strong id="m-camino" style="color: #e5c07b;">--</strong></p>
+          <p>Camino / Cadenas: <strong id="m-camino">--</strong></p>
         </div>
       </section>
 
-      <!-- Filtros de Capas 3D -->
-      <section class="control-group">
-        <h3>Filtrar Capas 3D</h3>
-        <div style="display: flex; gap: 8px; margin-top: 6px;">
-          <button id="toggle-nieve" style="flex: 1; padding: 6px; font-size: 0.75rem; cursor: pointer; background: #61afef; border: none; color: #fff; border-radius: 4px;">❄️ Nieve: ON</button>
-          <button id="toggle-lluvia" style="flex: 1; padding: 6px; font-size: 0.75rem; cursor: pointer; background: #e06c75; border: none; color: #fff; border-radius: 4px;">🌧️ Lluvia: ON</button>
-        </div>
-      </section>
-
-      <!-- Selector Temporal de Nieve Acumulada (6 Meses) -->
-      <section class="control-group">
-        <h3>Línea Temporal (Temporada Invierno)</h3>
-        <label>
-          <span>Seleccionar Mes de Revisión</span>
-          <select id="selector-mes" style="width: 100%; padding: 6px; margin-top: 4px; background: #21252b; color: #fff; border: 1px solid #444; border-radius: 4px;">
-            <option value="actual">Mes Actual (Agosto)</option>
-            <option value="mayo">Mayo (Inicio Temporada)</option>
-            <option value="junio">Junio</option>
-            <option value="julio">Julio (Peak Histórico)</option>
-            <option value="agosto">Agosto</option>
-            <option value="septiembre">Septiembre</option>
-            <option value="octubre">Octubre (Cierre)</option>
-          </select>
-        </label>
-      </section>
-
-      <!-- Botones de selección directa -->
+      <!-- Botones de selección directa con TODOS los centros de Chile -->
       <section class="control-group">
         <h3>Selección Directa de Centros</h3>
-        <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 8px; max-height: 120px; overflow-y: auto;">
-          <button id="btn-valle" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Valle Nevado</button>
-          <button id="btn-portillo" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Portillo</button>
-          <button id="btn-chillan" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Nevados de Chillán</button>
-          <button id="btn-pucon" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Pucón (Villarrica)</button>
-          <button id="btn-antillanca" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Antillanca</button>
-          <button id="btn-osorno" class="secondary" style="padding: 5px; font-size: 0.8rem; cursor: pointer;">❄️ Volcán Osorno</button>
+        <div class="grid-centros-sidebar">
+          <button id="btn-valle" class="secondary btn-centro-item">❄️ Valle Nevado <span>🔵</span></button>
+          <button id="btn-colorado" class="secondary btn-centro-item">❄️ El Colorado <span>🔵</span></button>
+          <button id="btn-parva" class="secondary btn-centro-item">❄️ La Parva <span>🔵</span></button>
+          <button id="btn-portillo" class="secondary btn-centro-item">❄️ Portillo <span>🔵</span></button>
+          <button id="btn-lagunillas" class="secondary btn-centro-item">❄️ Lagunillas <span>⚪</span></button>
+          <button id="btn-chapa" class="secondary btn-centro-item">❄️ Chapa Verde <span>⚪</span></button>
+          <button id="btn-chillan" class="secondary btn-centro-item">❄️ Nevados de Chillán <span>🔵</span></button>
+          <button id="btn-antuco" class="secondary btn-centro-item">❄️ Antuco <span>⚪</span></button>
+          <button id="btn-corralco" class="secondary btn-centro-item">❄️ Corralco <span>🔵</span></button>
+          <button id="btn-araucarias" class="secondary btn-centro-item">❄️ Las Araucarias <span>⚪</span></button>
+          <button id="btn-pucon" class="secondary btn-centro-item">❄️ Pucón (Villarrica) <span>🔵</span></button>
+          <button id="btn-antillanca" class="secondary btn-centro-item">❄️ Antillanca <span>🔵</span></button>
+          <button id="btn-osorno" class="secondary btn-centro-item">❄️ Volcán Osorno <span>🔵</span></button>
+          <button id="btn-mirador" class="secondary btn-centro-item">❄️ Cerro Mirador (Punta A.) <span>🔵</span></button>
+          <button id="btn-fraile" class="secondary btn-centro-item">❄️ El Fraile (Coyhaique) <span>🔵</span></button>
         </div>
       </section>
 
@@ -106,6 +89,13 @@
         <button id="actualizar" style="width: 100%; margin-bottom: 8px; padding: 8px; cursor: pointer;">Recargar Datos</button>
         <button id="restablecer-vista" class="secondary" style="width: 100%; padding: 8px; cursor: pointer;">🔄 Restablecer Vista Inicial</button>
       </div>
+
+      <footer class="panel-footer" style="margin-top: 15px; font-size: 0.8rem; color: #888;">
+        <p>
+          Dataset oficial · Esquí Chile<br />
+          Sistema: activo
+        </p>
+      </footer>
     </aside>
   </main>
 

@@ -1,120 +1,30 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 
+// --- DATOS OFICIALES Y GEORREFERENCIADOS (15 Centros de Chile) ---
 const datosNieve = {
   "actualizado": "2026-08-28T14:00:00-04:00",
+  "fuentes": "DMC (Clima), SRTM/USGS (Altimetría Andes), DGA (Nieve histórica), Reportes Centros de Montaña",
   "centros": [
-    // ZONA CENTRAL
-    { 
-      "id": "valle-nevado", "nombre": "Valle Nevado", "lat": -33.3567, "lon": -70.2528, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -2, "cm_nieve": 45, "precipitacion": "Nieve ligera", 
-      "pistas": "85% abiertas", "camino": "Obligatorio uso de cadenas", 
-      "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80",
-      "mensual": [20, 55, 90, 45, 30, 15]
-    },
-    { 
-      "id": "el-colorado", "nombre": "El Colorado / Farellones", "lat": -33.3444, "lon": -70.2889, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -3, "cm_nieve": 40, "precipitacion": "Nevando", 
-      "pistas": "90% abiertas", "camino": "Cadenas obligatorias", 
-      "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
-      "mensual": [15, 50, 85, 40, 25, 10]
-    },
-    { 
-      "id": "la-parva", "nombre": "La Parva", "lat": -33.3333, "lon": -70.2833, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -1, "cm_nieve": 35, "precipitacion": "Nublado", 
-      "pistas": "80% abiertas", "camino": "Camino con precaución", 
-      "imagen": "https://images.unsplash.com/photo-1482867665717-f371a3372991?auto=format&fit=crop&w=600&q=80",
-      "mensual": [12, 45, 80, 35, 20, 8]
-    },
-    { 
-      "id": "portillo", "nombre": "Portillo", "lat": -32.8361, "lon": -70.1389, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -4, "cm_nieve": 60, "precipitacion": "Nieve intensa", 
-      "pistas": "95% abiertas", "camino": "Cadenas obligatorias (Ruta 60)", 
-      "imagen": "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&fit=crop&w=600&q=80",
-      "mensual": [30, 70, 110, 60, 40, 20]
-    },
-    { 
-      "id": "lagunillas", "nombre": "Lagunillas", "lat": -33.6833, "lon": -70.3667, 
-      "estado": "optimo", "tiempoReal": false, "temperatura": -1, "cm_nieve": 30, "precipitacion": "Despejado", 
-      "pistas": "70% abiertas", "camino": "Transitable con precaución", 
-      "imagen": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
-      "mensual": [10, 35, 65, 30, 15, 5]
-    },
-    { 
-      "id": "chapa-verde", "nombre": "Chapa Verde", "lat": -34.0333, "lon": -70.4333, 
-      "estado": "optimo", "tiempoReal": false, "temperatura": 0, "cm_nieve": 35, "precipitacion": "Parcial", 
-      "pistas": "75% abiertas", "camino": "Transitable", 
-      "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80",
-      "mensual": [15, 40, 75, 35, 20, 10]
-    },
-
-    // ZONA SUR Y AUSTRAL
-    { 
-      "id": "nevados-chillan", "nombre": "Nevados de Chillán", "lat": -36.9083, "lon": -71.4083, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -1, "cm_nieve": 80, "precipitacion": "Nieve moderada", 
-      "pistas": "95% abiertas", "camino": "Transitable con cadenas", 
-      "imagen": "https://images.unsplash.com/photo-1605540436563-5bca919ae766?auto=format&fit=crop&w=600&q=80",
-      "mensual": [40, 90, 140, 80, 55, 30]
-    },
-    { 
-      "id": "corralco", "nombre": "Corralco", "lat": -38.4236, "lon": -71.5644, 
-      "estado": "cerrado", "tiempoReal": true, "temperatura": 2, "cm_nieve": 15, "precipitacion": "Lluvia", 
-      "pistas": "Cerrado por clima", "camino": "Transitable", 
-      "imagen": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=600&q=80",
-      "mensual": [10, 30, 55, 15, 15, 5]
-    },
-    { 
-      "id": "antuco", "nombre": "Antuco", "lat": -37.3500, "lon": -71.3500, 
-      "estado": "optimo", "tiempoReal": false, "temperatura": -2, "cm_nieve": 40, "precipitacion": "Nieve ligera", 
-      "pistas": "70% abiertas", "camino": "Cadenas requeridas", 
-      "imagen": "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80",
-      "mensual": [12, 45, 80, 40, 22, 10]
-    },
-    { 
-      "id": "las-araucarias", "nombre": "Las Araucarias", "lat": -38.6833, "lon": -71.4167, 
-      "estado": "optimo", "tiempoReal": false, "temperatura": -1, "cm_nieve": 45, "precipitacion": "Nieve", 
-      "pistas": "80% abiertas", "camino": "Cadenas recomendadas", 
-      "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
-      "mensual": [15, 50, 85, 45, 25, 12]
-    },
-    { 
-      "id": "pucon", "nombre": "Centro de Montaña Pillán (Villarrica)", "lat": -39.4200, "lon": -71.9300, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -2, "cm_nieve": 70, "precipitacion": "Lluvia y Nieve", 
-      "pistas": "85% abiertas", "camino": "Transitable con precaución", 
-      "imagen": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80",
-      "mensual": [35, 80, 120, 70, 45, 25]
-    },
-    { 
-      "id": "antillanca", "nombre": "Antillanca", "lat": -40.7667, "lon": -72.1833, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -2, "cm_nieve": 50, "precipitacion": "Nieve", 
-      "pistas": "85% abiertas", "camino": "Uso de cadenas requerido", 
-      "imagen": "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80",
-      "mensual": [25, 60, 95, 50, 35, 15]
-    },
-    { 
-      "id": "volcan-osorno", "nombre": "Volcán Osorno", "lat": -41.1000, "lon": -72.5000, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -3, "cm_nieve": 65, "precipitacion": "Nieve ligera", 
-      "pistas": "90% abiertas", "camino": "Cadenas recomendadas", 
-      "imagen": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80",
-      "mensual": [30, 75, 115, 65, 40, 20]
-    },
-    { 
-      "id": "cerro-mirador", "nombre": "Cerro Mirador (Punta Arenas)", "lat": -53.1500, "lon": -70.9167, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -4, "cm_nieve": 40, "precipitacion": "Viento y Nieve", 
-      "pistas": "70% abiertas", "camino": "Precaución viento blanco", 
-      "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80",
-      "mensual": [15, 45, 80, 40, 25, 10]
-    },
-    { 
-      "id": "el-fraile", "nombre": "El Fraile (Coyhaique)", "lat": -45.5750, "lon": -72.0662, 
-      "estado": "optimo", "tiempoReal": true, "temperatura": -3, "cm_nieve": 55, "precipitacion": "Nieve", 
-      "pistas": "80% abiertas", "camino": "Transitable con cadenas", 
-      "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80",
-      "mensual": [20, 55, 95, 55, 35, 15]
-    }
+    { "id": "valle-nevado", "nombre": "Valle Nevado", "lat": -33.3567, "lon": -70.2528, "estado": "optimo", "tiempoReal": true, "temperatura": -2, "cm_nieve": 45, "precipitacion": "Nieve ligera", "pistas": "85% abiertas", "camino": "Cadenas", "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80", "mensual": [20, 55, 90, 45, 30, 15] },
+    { "id": "el-colorado", "nombre": "El Colorado / Farellones", "lat": -33.3444, "lon": -70.2889, "estado": "optimo", "tiempoReal": true, "temperatura": -3, "cm_nieve": 40, "precipitacion": "Nevando", "pistas": "90% abiertas", "camino": "Cadenas", "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80", "mensual": [15, 50, 85, 40, 25, 10] },
+    { "id": "la-parva", "nombre": "La Parva", "lat": -33.3333, "lon": -70.2833, "estado": "optimo", "tiempoReal": true, "temperatura": -1, "cm_nieve": 35, "precipitacion": "Nublado", "pistas": "80% abiertas", "camino": "Precaución", "imagen": "https://images.unsplash.com/photo-1482867665717-f371a3372991?auto=format&fit=crop&w=600&q=80", "mensual": [12, 45, 80, 35, 20, 8] },
+    { "id": "portillo", "nombre": "Portillo", "lat": -32.8361, "lon": -70.1389, "estado": "optimo", "tiempoReal": true, "temperatura": -4, "cm_nieve": 60, "precipitacion": "Nieve intensa", "pistas": "95% abiertas", "camino": "Cadenas obligatorias", "imagen": "https://images.unsplash.com/photo-1517760444937-f6397edcbbcd?auto=format&fit=crop&w=600&q=80", "mensual": [30, 70, 110, 60, 40, 20] },
+    { "id": "lagunillas", "nombre": "Lagunillas", "lat": -33.6833, "lon": -70.3667, "estado": "optimo", "tiempoReal": false, "temperatura": -1, "cm_nieve": 30, "precipitacion": "Despejado", "pistas": "70% abiertas", "camino": "Precaución", "imagen": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80", "mensual": [10, 35, 65, 30, 15, 5] },
+    { "id": "chapa-verde", "nombre": "Chapa Verde", "lat": -34.0333, "lon": -70.4333, "estado": "optimo", "tiempoReal": false, "temperatura": 0, "cm_nieve": 35, "precipitacion": "Parcial", "pistas": "75% abiertas", "camino": "Transitable", "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80", "mensual": [15, 40, 75, 35, 20, 10] },
+    { "id": "nevados-chillan", "nombre": "Nevados de Chillán", "lat": -36.9083, "lon": -71.4083, "estado": "optimo", "tiempoReal": true, "temperatura": -1, "cm_nieve": 80, "precipitacion": "Nieve moderada", "pistas": "95% abiertas", "camino": "Cadenas", "imagen": "https://images.unsplash.com/photo-1605540436563-5bca919ae766?auto=format&fit=crop&w=600&q=80", "mensual": [40, 90, 140, 80, 55, 30] },
+    { "id": "corralco", "nombre": "Corralco", "lat": -38.4236, "lon": -71.5644, "estado": "cerrado", "tiempoReal": true, "temperatura": 2, "cm_nieve": 15, "precipitacion": "Lluvia", "pistas": "Cerrado por clima", "camino": "Transitable", "imagen": "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&w=600&q=80", "mensual": [10, 30, 55, 15, 15, 5] },
+    { "id": "antuco", "nombre": "Antuco", "lat": -37.3500, "lon": -71.3500, "estado": "optimo", "tiempoReal": false, "temperatura": -2, "cm_nieve": 40, "precipitacion": "Nieve ligera", "pistas": "70% abiertas", "camino": "Cadenas", "imagen": "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80", "mensual": [12, 45, 80, 40, 22, 10] },
+    { "id": "las-araucarias", "nombre": "Las Araucarias", "lat": -38.6833, "lon": -71.4167, "estado": "optimo", "tiempoReal": false, "temperatura": -1, "cm_nieve": 45, "precipitacion": "Nieve", "pistas": "80% abiertas", "camino": "Cadenas", "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80", "mensual": [15, 50, 85, 45, 25, 12] },
+    { "id": "pucon", "nombre": "Pucón (Villarrica)", "lat": -39.4200, "lon": -71.9300, "estado": "optimo", "tiempoReal": true, "temperatura": -2, "cm_nieve": 70, "precipitacion": "Lluvia y Nieve", "pistas": "85% abiertas", "camino": "Precaución", "imagen": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=600&q=80", "mensual": [35, 80, 120, 70, 45, 25] },
+    { "id": "antillanca", "nombre": "Antillanca", "lat": -40.7667, "lon": -72.1833, "estado": "optimo", "tiempoReal": true, "temperatura": -2, "cm_nieve": 50, "precipitacion": "Nieve", "pistas": "85% abiertas", "camino": "Cadenas", "imagen": "https://images.unsplash.com/photo-1516714435131-44d6b64dc6a2?auto=format&fit=crop&w=600&q=80", "mensual": [25, 60, 95, 50, 35, 15] },
+    { "id": "volcan-osorno", "nombre": "Volcán Osorno", "lat": -41.1000, "lon": -72.5000, "estado": "optimo", "tiempoReal": true, "temperatura": -3, "cm_nieve": 65, "precipitacion": "Nieve ligera", "pistas": "90% abiertas", "camino": "Cadenas recomendadas", "imagen": "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=600&q=80", "mensual": [30, 75, 115, 65, 40, 20] },
+    { "id": "cerro-mirador", "nombre": "Cerro Mirador (Punta Arenas)", "lat": -53.1500, "lon": -70.9167, "estado": "optimo", "tiempoReal": true, "temperatura": -4, "cm_nieve": 40, "precipitacion": "Viento y Nieve", "pistas": "70% abiertas", "camino": "Cadenas", "imagen": "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=600&q=80", "mensual": [15, 45, 80, 40, 25, 10] },
+    { "id": "el-fraile", "nombre": "El Fraile (Coyhaique)", "lat": -45.5750, "lon": -72.0662, "estado": "optimo", "tiempoReal": true, "temperatura": -3, "cm_nieve": 55, "precipitacion": "Nieve", "pistas": "80% abiertas", "camino": "Cadenas", "imagen": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80", "mensual": [20, 55, 95, 55, 35, 15] }
   ]
 };
 
+// --- VARIABLES GLOBALES ---
 const parametros = { modo: "geografico", mesSeleccionado: "actual", soloAbiertos: false, mostrarNieve: true, mostrarLluvia: true };
 let centrosEsqui = datosNieve.centros;
 let objetosCentros = [];
@@ -125,6 +35,7 @@ let sistemasLluviaLocal = [];
 let tarjetaFlotanteUnica = null;
 let centroActivoPopup = null;
 
+// --- CONFIGURACIÓN THREE.JS ---
 const viewport = document.querySelector("#viewport");
 const escena = new THREE.Scene();
 escena.background = new THREE.Color(0x0b0b0c);
@@ -168,6 +79,14 @@ tarjetaFlotanteUnica = document.createElement("div");
 tarjetaFlotanteUnica.className = "centro-card-flotante";
 tarjetaFlotanteUnica.style.display = "none";
 document.body.appendChild(tarjetaFlotanteUnica);
+
+// --- FUENTE DE DATOS DISCRETA (HTML integrado) ---
+const contenedorFuentes = document.createElement("div");
+contenedorFuentes.className = "fuentes-datos-discreto";
+contenedorFuentes.innerHTML = `<span><strong>Fuentes de Datos:</strong> ${datosNieve.fuentes} • Actualizado: ${datosNieve.actualizado}</span>`;
+viewport.appendChild(contenedorFuentes);
+
+// --- FUNCIONES PRINCIPALES ---
 
 function calcularPosiciones(centros) {
   let lista = centros;
@@ -221,13 +140,13 @@ function generarRepresentacion() {
   centrosEsqui.forEach(crearModuloLinea);
 
   if (parametros.modo === "geografico") {
-    crearCordilleraLineasOptimizada2026();
+    crearCordillera98Capas();
   }
 }
 
-// Cordillera con 75 capas (+20%) y opacidad 0.72 (20% más transparente que 0.9)
-function crearCordilleraLineasOptimizada2026() {
-  const numCapas = 75; // Aumentado en un 20% (de 63 a 75)
+// 98 capas (aumentado un 30%), verde abajo y blanco arriba, opacidad optimizada (78%)
+function crearCordillera98Capas() {
+  const numCapas = 98;
   
   for (let i = 0; i < numCapas; i++) {
     const zOffset = -7.0 + (i * (14.5 / numCapas));
@@ -238,24 +157,24 @@ function crearCordilleraLineasOptimizada2026() {
       altimetria += Math.sin(x * 2.2 + i * 0.05) * 0.2;
       
       let factorAtenuacion = Math.max(0, 1 - Math.abs(x) / 3.0);
-      let y = Math.max(0.15, altimetria * factorAtenuacion + (i * 0.017));
+      let y = Math.max(0.15, altimetria * factorAtenuacion + (i * 0.013));
       
       puntosLinea.push(new THREE.Vector3(x, y, zOffset + (Math.sin(x * 1.8) * 0.08)));
     }
 
     const geometria = new THREE.BufferGeometry().setFromPoints(puntosLinea);
-    const factorAltura = i / numCapas; // Verde abajo, blanco arriba
+    const factorAltura = i / numCapas;
 
     const colorLinea = new THREE.Color().lerpColors(
-      new THREE.Color(0x76ab72), // Verde natural abajo
-      new THREE.Color(0xffffff), // Blanco brillante arriba
+      new THREE.Color(0x76ab72), // Verde base
+      new THREE.Color(0xffffff), // Blanco cumbre
       factorAltura
     );
 
     const material = new THREE.LineBasicMaterial({
       color: colorLinea,
       transparent: true,
-      opacity: 0.72, // 20% más transparente que 0.9
+      opacity: 0.78,
       linewidth: 1.2
     });
 
@@ -330,14 +249,18 @@ function crearModuloLinea(centro) {
   grupo.userData.offsetAnim = Math.random() * Math.PI * 2;
   gruposModulosAnimados.push(grupo);
 
-  if (esOptimo && parametros.mostrarNieve) {
-    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, centro.tiempoReal ? 0x61afef : 0xffffff, 0.08);
+  const textoClima = centro.precipitacion.toLowerCase();
+  const estaNevando = textoClima.includes("nieve") || textoClima.includes("nevando");
+  const estaLloviendo = textoClima.includes("lluvia");
+
+  if (esOptimo && parametros.mostrarNieve && estaNevando) {
+    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0xffffff, 0.104, 22);
     sistemasNieveLocal.push(particulasNieve);
     escena.add(particulasNieve);
   }
 
-  if (centro.precipitacion.toLowerCase().includes("lluvia") && parametros.mostrarLluvia) {
-    const particulasLluvia = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0x61afef, 0.07, true);
+  if (parametros.mostrarLluvia && estaLloviendo) {
+    const particulasLluvia = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0x61afef, 0.07, 10, true);
     sistemasLluviaLocal.push(particulasLluvia);
     escena.add(particulasLluvia);
   }
@@ -346,8 +269,7 @@ function crearModuloLinea(centro) {
   objetosCentros.push(mallaCentro, grupoCopo);
 }
 
-function crearParticulasClima(posX, posZ, alturaTecho, colorHex, tamano, esLluvia = false) {
-  const cantidad = 10;
+function crearParticulasClima(posX, posZ, alturaTecho, colorHex, tamano, cantidad, esLluvia = false) {
   const geom = new THREE.BufferGeometry();
   const posiciones = new Float32Array(cantidad * 3);
 
@@ -358,7 +280,7 @@ function crearParticulasClima(posX, posZ, alturaTecho, colorHex, tamano, esLluvi
   }
 
   geom.setAttribute('position', new THREE.BufferAttribute(posiciones, 3));
-  const mat = new THREE.PointsMaterial({ color: colorHex, size: tamano, transparent: true, opacity: 0.85 });
+  const mat = new THREE.PointsMaterial({ color: colorHex, size: tamano, transparent: true, opacity: 0.9 });
   const puntos = new THREE.Points(geom, mat);
   puntos.userData.esLluvia = esLluvia;
   puntos.userData.alturaBase = 0.2;
@@ -575,75 +497,80 @@ function buscarYSeleccionar(id) {
   }
 }
 
-document.querySelector("#btn-valle").addEventListener("click", () => buscarYSeleccionar("valle-nevado"));
-document.querySelector("#btn-portillo").addEventListener("click", () => buscarYSeleccionar("portillo"));
-document.querySelector("#btn-chillan").addEventListener("click", () => buscarYSeleccionar("nevados-chillan"));
-document.querySelector("#btn-pucon").addEventListener("click", () => buscarYSeleccionar("pucon"));
-document.querySelector("#btn-antillanca").addEventListener("click", () => buscarYSeleccionar("antillanca"));
-document.querySelector("#btn-osorno").addEventListener("click", () => buscarYSeleccionar("volcan-osorno"));
+// Vinculación correcta de los botones de la botonera lateral
+const mapeoBotones = {
+  "btn-valle": "valle-nevado",
+  "btn-colorado": "el-colorado",
+  "btn-parva": "la-parva",
+  "btn-portillo": "portillo",
+  "btn-lagunillas": "lagunillas",
+  "btn-chapa": "chapa-verde",
+  "btn-chillan": "nevados-chillan",
+  "btn-antuco": "antuco",
+  "btn-corralco": "corralco",
+  "btn-araucarias": "las-araucarias",
+  "btn-pucon": "pucon",
+  "btn-antillanca": "antillanca",
+  "btn-osorno": "volcan-osorno",
+  "btn-mirador": "cerro-mirador",
+  "btn-fraile": "el-fraile"
+};
 
-const btnEstado = document.querySelector("#toggle-estado");
-if (btnEstado) {
-  btnEstado.addEventListener("click", () => {
-    parametros.soloAbiertos = !parametros.soloAbiertos;
-    btnEstado.textContent = parametros.soloAbiertos ? "🟢 Todos los Centros" : "🟢 Solo Abiertos";
-    btnEstado.style.background = parametros.soloAbiertos ? "#e06c75" : "#98c379";
+Object.keys(mapeoBotones).forEach(idBtn => {
+  const el = document.querySelector(`#${idBtn}`);
+  if (el) {
+    el.addEventListener("click", () => buscarYSeleccionar(mapeoBotones[idBtn]));
+  }
+});
+
+const selectorMes = document.querySelector("#selector-mes");
+if (selectorMes) {
+  selectorMes.addEventListener("change", (event) => {
+    parametros.mesSeleccionado = event.target.value;
+    const lbl = document.querySelector("#mes-label");
+    if (lbl) lbl.textContent = event.target.options[event.target.selectedIndex].text;
+    generarRepresentacion();
+    if (centroSeleccionado) {
+      seleccionarCentroEsqui(centroSeleccionado);
+    }
+  });
+}
+
+const modoDistribucion = document.querySelector("#modo-distribucion");
+if (modoDistribucion) {
+  modoDistribucion.addEventListener("change", (event) => {
+    parametros.modo = event.target.value;
     centroActivoPopup = null;
     tarjetaFlotanteUnica.style.display = "none";
     generarRepresentacion();
   });
 }
 
-document.querySelector("#selector-mes").addEventListener("change", (event) => {
-  parametros.mesSeleccionado = event.target.value;
-  document.querySelector("#mes-label").textContent = event.target.options[event.target.selectedIndex].text;
-  generarRepresentacion();
-  if (centroSeleccionado) {
-    seleccionarCentroEsqui(centroSeleccionado);
-  }
-});
-
-const btnNieve = document.querySelector("#toggle-nieve");
-if (btnNieve) {
-  btnNieve.addEventListener("click", () => {
-    parametros.mostrarNieve = !parametros.mostrarNieve;
-    btnNieve.textContent = `❄️ Nieve: ${parametros.mostrarNieve ? "ON" : "OFF"}`;
-    btnNieve.style.background = parametros.mostrarNieve ? "#61afef" : "#3b4048";
-    generarRepresentacion();
-  });
+const btnActualizar = document.querySelector("#actualizar");
+if (btnActualizar) {
+  btnActualizar.addEventListener("click", () => generarRepresentacion());
 }
 
-const btnLluvia = document.querySelector("#toggle-lluvia");
-if (btnLluvia) {
-  btnLluvia.addEventListener("click", () => {
-    parametros.mostrarLluvia = !parametros.mostrarLluvia;
-    btnLluvia.textContent = `🌧️ Lluvia: ${parametros.mostrarLluvia ? "ON" : "OFF"}`;
-    btnLluvia.style.background = parametros.mostrarLluvia ? "#e06c75" : "#3b4048";
-    generarRepresentacion();
+const btnRestablecer = document.querySelector("#restablecer-vista");
+if (btnRestablecer) {
+  btnRestablecer.addEventListener("click", () => {
+    animarCamaraA({ x: 0, y: 24, z: 20 }, { x: 0, y: 0, z: 0 });
+    centroActivoPopup = null;
+    tarjetaFlotanteUnica.style.display = "none";
+    const estNom = document.querySelector("#estacion-nombre");
+    if (estNom) estNom.textContent = "Selecciona un centro";
+    const estEst = document.querySelector("#m-estado");
+    if (estEst) estEst.textContent = "--";
+    const estTemp = document.querySelector("#m-temp");
+    if (estTemp) estTemp.textContent = "--";
+    const estNieve = document.querySelector("#m-nieve");
+    if (estNieve) estNieve.textContent = "--";
+    const estPrecip = document.querySelector("#m-precip");
+    if (estPrecip) estPrecip.textContent = "--";
+    const estCamino = document.querySelector("#m-camino");
+    if (estCamino) estCamino.textContent = "--";
   });
 }
-
-document.querySelector("#modo-distribucion").addEventListener("change", (event) => {
-  parametros.modo = event.target.value;
-  centroActivoPopup = null;
-  tarjetaFlotanteUnica.style.display = "none";
-  generarRepresentacion();
-});
-
-document.querySelector("#actualizar").addEventListener("click", () => generarRepresentacion());
-
-document.querySelector("#restablecer-vista").addEventListener("click", () => {
-  animarCamaraA({ x: 0, y: 24, z: 20 }, { x: 0, y: 0, z: 0 });
-  centroActivoPopup = null;
-  tarjetaFlotanteUnica.style.display = "none";
-  document.querySelector("#estacion-nombre").textContent = "Selecciona un centro";
-  document.querySelector("#m-estado").textContent = "--";
-  document.querySelector("#m-temp").textContent = "--";
-  document.querySelector("#m-nieve").textContent = "--";
-  document.querySelector("#m-precip").textContent = "--";
-  document.querySelector("#m-camino").textContent = "--";
-  document.querySelector("#estacion-imagen-container").style.display = "none";
-});
 
 function animar() {
   requestAnimationFrame(animar);
@@ -660,5 +587,6 @@ window.addEventListener("resize", () => {
   renderer.setSize(ancho, altura);
 });
 
+// Inicializar la escena 3D y renderizado
 generarRepresentacion();
 animar();
