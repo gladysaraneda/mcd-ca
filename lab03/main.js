@@ -38,12 +38,12 @@ let centroActivoPopup = null;
 // --- CONFIGURACIÓN THREE.JS ---
 const viewport = document.querySelector("#viewport");
 const escena = new THREE.Scene();
-escena.background = new THREE.Color(0x0b0b0c);
+escena.background = null;
 
 const camara = new THREE.PerspectiveCamera(42, viewport.clientWidth / viewport.clientHeight, 0.1, 300);
 camara.position.set(0, 24, 20);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(viewport.clientWidth, viewport.clientHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -78,9 +78,9 @@ escena.add(grupoTopografia);
 tarjetaFlotanteUnica = document.createElement("div");
 tarjetaFlotanteUnica.className = "centro-card-flotante";
 tarjetaFlotanteUnica.style.display = "none";
-document.body.appendChild(tarjetaFlotanteUnica);
+viewport.appendChild(tarjetaFlotanteUnica);
 
-// --- FUENTE DE DATOS DISCRETA (HTML integrado) ---
+// --- FUENTE DE DATOS DISCRETA ---
 const contenedorFuentes = document.createElement("div");
 contenedorFuentes.className = "fuentes-datos-discreto";
 contenedorFuentes.innerHTML = `<span><strong>Fuentes de Datos:</strong> ${datosNieve.fuentes} • Actualizado: ${datosNieve.actualizado}</span>`;
@@ -144,7 +144,6 @@ function generarRepresentacion() {
   }
 }
 
-// 98 capas (aumentado un 30%), verde abajo y blanco arriba, opacidad optimizada (78%)
 function crearCordillera98Capas() {
   const numCapas = 98;
   
@@ -166,16 +165,16 @@ function crearCordillera98Capas() {
     const factorAltura = i / numCapas;
 
     const colorLinea = new THREE.Color().lerpColors(
-      new THREE.Color(0x76ab72), // Verde base
-      new THREE.Color(0xffffff), // Blanco cumbre
+      new THREE.Color(0x38a169), // Verde abajo
+      new THREE.Color(0x0284c7), // Celeste arriba
       factorAltura
     );
 
     const material = new THREE.LineBasicMaterial({
       color: colorLinea,
       transparent: true,
-      opacity: 0.78,
-      linewidth: 1.2
+      opacity: 0.88,
+      linewidth: 1.5
     });
 
     const linea = new THREE.Line(geometria, material);
@@ -254,13 +253,13 @@ function crearModuloLinea(centro) {
   const estaLloviendo = textoClima.includes("lluvia");
 
   if (esOptimo && parametros.mostrarNieve && estaNevando) {
-    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0xffffff, 0.104, 22);
+    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0x0284c7, 0.104, 22);
     sistemasNieveLocal.push(particulasNieve);
     escena.add(particulasNieve);
   }
 
   if (parametros.mostrarLluvia && estaLloviendo) {
-    const particulasLluvia = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0x61afef, 0.07, 10, true);
+    const particulasLluvia = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0x0284c7, 0.07, 10, true);
     sistemasLluviaLocal.push(particulasLluvia);
     escena.add(particulasLluvia);
   }
@@ -428,10 +427,10 @@ function seleccionarCentroEsqui(centro) {
   const imgContainer = document.querySelector("#estacion-imagen-container");
   const imgElement = document.querySelector("#estacion-foto");
   if (centro.imagen) {
-    imgElement.src = centro.imagen;
-    imgContainer.style.display = "block";
+    if (imgElement) imgElement.src = centro.imagen;
+    if (imgContainer) imgContainer.style.display = "block";
   } else {
-    imgContainer.style.display = "none";
+    if (imgContainer) imgContainer.style.display = "none";
   }
 
   actualizarPopupGrafico(centro);
@@ -441,7 +440,7 @@ function seleccionarCentroEsqui(centro) {
 
 function actualizarPopupGrafico(centro) {
   const meses = ["May", "Jun", "Jul", "Ago", "Sep", "Oct"];
-  const valores = centro.mensual || [0,0,0,0,0,0];
+  const valores = centro.mensual || [0, 0, 0, 0, 0, 0];
   const maxVal = Math.max(...valores, 140);
 
   const points = valores.map((v, i) => {
@@ -454,17 +453,17 @@ function actualizarPopupGrafico(centro) {
     <div class="card-title">${centro.nombre} ${centro.tiempoReal ? '<span>🔵</span>' : ''}</div>
     <div class="chart-container-grid">
       <svg class="line-chart-svg" viewBox="0 0 180 75">
-        <line x1="10" y1="15" x2="170" y2="15" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
-        <line x1="10" y1="30" x2="170" y2="30" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
-        <line x1="10" y1="45" x2="170" y2="45" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
-        <line x1="10" y1="60" x2="170" y2="60" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+        <line x1="10" y1="15" x2="170" y2="15" stroke="rgba(0,0,0,0.1)" stroke-width="1" />
+        <line x1="10" y1="30" x2="170" y2="30" stroke="rgba(0,0,0,0.1)" stroke-width="1" />
+        <line x1="10" y1="45" x2="170" y2="45" stroke="rgba(0,0,0,0.1)" stroke-width="1" />
+        <line x1="10" y1="60" x2="170" y2="60" stroke="rgba(0,0,0,0.1)" stroke-width="1" />
 
-        <polyline fill="none" stroke="${centro.tiempoReal ? '#61afef' : '#abb2bf'}" stroke-width="2.5" points="${points.join(' ')}" />
+        <polyline fill="none" stroke="${centro.tiempoReal ? '#0284c7' : '#475569'}" stroke-width="2.5" points="${points.join(' ')}" />
 
         ${valores.map((v, i) => {
           const px = i * 30 + 15;
           const py = 65 - (v / maxVal) * 50;
-          return `<circle cx="${px}" cy="${py}" r="3.5" fill="${centro.tiempoReal ? '#61afef' : '#abb2bf'}" />`;
+          return `<circle cx="${px}" cy="${py}" r="3.5" fill="${centro.tiempoReal ? '#0284c7' : '#475569'}" />`;
         }).join('')}
       </svg>
       <div class="chart-labels">

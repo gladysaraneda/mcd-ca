@@ -24,7 +24,7 @@
 
       <!-- Fuente de datos oficial discreta en la esquina inferior izquierda -->
       <div class="fuentes-datos-discreto">
-        <span><strong>Fuentes:</strong> DMC (Clima en vivo) • Modelos SRTM/USGS (Altimetría Andes) • DGA (Nieve histórica) • Reportes Horarios Centros de Montaña</span>
+        <span><strong>Fuentes:</strong> DMC (Clima) • SRTM/USGS (Altimetría Andes) • DGA (Nieve histórica) • Reportes Centros de Montaña</span>
       </div>
 
       <div class="hint">
@@ -49,6 +49,23 @@
           <p>Precipitación: <strong id="m-precip">--</strong></p>
           <p>Camino / Cadenas: <strong id="m-camino">--</strong></p>
         </div>
+      </section>
+
+      <!-- LÍNEA TEMPORAL (SELECTOR DE MESES) -->
+      <section class="control-group">
+        <h3>Línea Temporal (Temporada)</h3>
+        <label style="margin-bottom: 6px;">
+          <span>Mes de Revisión: <strong id="mes-label" style="color: #61afef;">Agosto (Actual)</strong></span>
+        </label>
+        <select id="selector-mes" style="width: 100%; padding: 6px; background: #21252b; color: #fff; border: 1px solid #444; border-radius: 4px;">
+          <option value="actual">Mes Actual (Agosto)</option>
+          <option value="mayo">Mayo</option>
+          <option value="junio">Junio</option>
+          <option value="julio">Julio</option>
+          <option value="agosto" selected>Agosto</option>
+          <option value="septiembre">Septiembre</option>
+          <option value="octubre">Octubre</option>
+        </select>
       </section>
 
       <!-- Botones de selección directa con TODOS los centros de Chile -->
@@ -78,7 +95,7 @@
         <h3>Reglas de Representación</h3>
         <label>
           <span>Modo de Visualización</span>
-          <select id="modo-distribucion" style="width: 100%; padding: 6px; margin-top: 4px; background: #21252b; color: #fff; border: 1px solid #444;">
+          <select id="modo-distribucion" style="width: 100%; padding: 6px; margin-top: 4px; background: #21252b; color: #fff; border: 1px solid #444; border-radius: 4px;">
             <option value="geografico">Mapa de Chile (Geográfico)</option>
             <option value="ordenado">Matriz Ordenada por Nieve</option>
           </select>

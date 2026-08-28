@@ -1,6 +1,3 @@
-/* ==========================================================================
-   Estructura General y Reset
-   ========================================================================== */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -15,9 +12,6 @@ body {
   height: 100vh;
 }
 
-/* ==========================================================================
-   Contenedor Principal (App Shell)
-   ========================================================================== */
 .app-shell {
   display: grid;
   grid-template-columns: 1fr 340px;
@@ -34,11 +28,9 @@ body {
 #viewport {
   width: 100%;
   height: 100%;
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 50%, #bae6fd 100%);
 }
 
-/* ==========================================================================
-   Cabecera del Proyecto
-   ========================================================================== */
 .project-header {
   position: absolute;
   top: 24px;
@@ -51,20 +43,20 @@ body {
   font-size: 0.7rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #5c6370;
+  color: #475569;
   margin-bottom: 4px;
 }
 
 h1 {
   font-size: 1.5rem;
-  color: #fff;
+  color: #0f172a;
   font-weight: 600;
   margin-bottom: 4px;
 }
 
 .subtitle {
   font-size: 0.85rem;
-  color: #828a9a;
+  color: #334155;
 }
 
 .hint {
@@ -72,24 +64,22 @@ h1 {
   bottom: 16px;
   left: 24px;
   font-size: 0.75rem;
-  color: #5c6370;
-  background: rgba(11, 11, 12, 0.7);
+  color: #334155;
+  background: rgba(255, 255, 255, 0.8);
   padding: 6px 12px;
   border-radius: 4px;
   backdrop-filter: blur(4px);
   z-index: 10;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-/* ==========================================================================
-   Fuente de Datos Discreta (Esquina Inferior Izquierda)
-   ========================================================================== */
 .fuentes-datos-discreto {
   position: absolute;
   bottom: 10px;
   left: 24px;
-  background: rgba(11, 11, 12, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #6a737d;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #475569;
   padding: 5px 10px;
   border-radius: 4px;
   font-size: 10px;
@@ -101,19 +91,16 @@ h1 {
 }
 
 .fuentes-datos-discreto strong {
-  color: #abb2bf;
+  color: #0f172a;
 }
 
-/* ==========================================================================
-   Panel Lateral de Control (Aside)
-   ========================================================================== */
 .controls-panel {
   background: #121418;
   border-left: 1px solid #1f2228;
   padding: 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   overflow-y: auto;
   z-index: 10;
 }
@@ -129,7 +116,7 @@ h1 {
   background: #181a20;
   border: 1px solid #21252b;
   border-radius: 6px;
-  padding: 14px;
+  padding: 12px;
 }
 
 .control-group h3 {
@@ -137,7 +124,7 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: #61afef;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .control-group label {
@@ -146,14 +133,11 @@ h1 {
   display: block;
 }
 
-/* ==========================================================================
-   Botonera Completa de Centros (Sidebar Scroller)
-   ========================================================================== */
 .grid-centros-sidebar {
   display: grid;
   grid-template-columns: 1fr;
   gap: 5px;
-  max-height: 220px;
+  max-height: 180px;
   overflow-y: auto;
   padding-right: 4px;
   margin-top: 4px;
@@ -189,9 +173,6 @@ h1 {
   color: #fff;
 }
 
-/* ==========================================================================
-   Botones y Acciones
-   ========================================================================== */
 button {
   background: #61afef;
   color: #0b0b0c;
@@ -226,23 +207,19 @@ button.secondary:hover {
   gap: 8px;
 }
 
-/* ==========================================================================
-   Tarjetas Pop-up Flotantes con Gráfico de Líneas y Retícula (Canvas 3D)
-   ========================================================================== */
 .centro-card-flotante {
   position: absolute;
   background: rgba(15, 17, 23, 0.95);
-  border: 1px solid rgba(97, 175, 239, 0.5);
+  border: 1px solid rgba(97, 175, 239, 0.6);
   padding: 12px 14px;
   border-radius: 8px;
   color: #fff;
   font-family: inherit;
   pointer-events: none;
-  transform: translate(-50%, -100%);
-  z-index: 20;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+  z-index: 100;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
   backdrop-filter: blur(6px);
-  width: 200px;
+  width: 210px;
 }
 
 .card-title {
