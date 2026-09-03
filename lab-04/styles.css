@@ -1,0 +1,141 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+:root {
+  --fondo: #0a121a; 
+  --panel: #111c29;
+  --panel2: #162638;
+  --borde: #406792;       
+  --tenue: #369CBB;       
+  --acento: #90E2ED;      
+  --suave: #90E2ED;       
+  --texto: #f0f8ff;       
+  --ok: #90E2ED;          
+  --error: #c67f74;       
+  --espera: #369CBB;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0; 
+  min-height: 100%; 
+  background: var(--fondo); 
+  color: var(--texto); 
+  font-family: 'Share Tech Mono', monospace; 
+}
+
+body { padding: 28px; }
+
+.app { width: min(1100px, 100%); margin: 0 auto; }
+
+h1, h2, .eyebrow, label span, button, .panel-titulo span, .nodos-cabecera, .metricas span {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.encabezado { margin-bottom: 28px; position: relative; }
+.eyebrow { margin: 0 0 8px; color: var(--tenue); font-size: 14px; font-weight: 600; letter-spacing: .16em; }
+h1 { margin: 0 0 7px; font-size: clamp(40px, 7vw, 60px); font-weight: 400; letter-spacing: -0.02em; color: var(--acento); }
+.bajada { margin: 0; color: var(--texto); font-size: 16px; opacity: 0.8; }
+.etapa-badge { position: absolute; right: 0; top: 0; color: var(--tenue); font-size: 12px; letter-spacing: .12em; }
+.etapa-badge strong { color: var(--acento); font-size: 22px; margin-left: 5px; }
+
+.workspace { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; margin-top: 12px; }
+
+.panel { padding: 22px; margin-bottom: 12px; background: var(--panel); border: 1px solid var(--borde); box-shadow: 0 4px 20px rgba(0,0,0,0.2); }
+.panel-destacado { background: var(--panel2); border-color: var(--acento); }
+.panel[hidden] { display: none !important; }
+
+.panel-titulo { display: flex; gap: 12px; align-items: baseline; margin-bottom: 18px; border-bottom: 1px solid var(--borde); padding-bottom: 8px; }
+.panel-titulo span { color: var(--acento); font-size: 14px; }
+.panel-titulo h2 { margin: 0; font-size: 20px; font-weight: 400; }
+
+label { display: block; margin: 13px 0; }
+label span, .dato-grid span, .ultimo-json > span, .control-label { display: block; margin-bottom: 6px; color: var(--tenue); font-size: 13px; }
+
+input[type="text"], input[type="password"] {
+  width: 100%; 
+  padding: 11px 12px; 
+  border: 1px solid var(--borde); 
+  background: rgba(10, 18, 26, 0.7); 
+  color: var(--acento); 
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+input[type="text"]:focus, input[type="password"]:focus { border-color: var(--acento); }
+
+button {
+  width: 100%; 
+  margin-top: 6px; 
+  padding: 14px 16px; 
+  border: 1px solid var(--borde); 
+  background: var(--tenue); 
+  color: #0a121a; 
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 16px;
+  font-weight: bold; 
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+button:hover {
+  background: var(--acento); 
+  border-color: var(--acento);
+  box-shadow: 0 0 15px rgba(144, 226, 237, 0.4); 
+}
+button.conectado { background: var(--acento); border-color: var(--acento); }
+button:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+.estado-conexion { display: flex; gap: 9px; align-items: center; margin-top: 14px; font-size: 14px;}
+.estado-punto { width: 10px; height: 10px; border-radius: 0; background: var(--tenue); }
+.estado-punto.conectando { background: var(--espera); }
+.estado-punto.conectado { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.estado-punto.error { background: var(--error); }
+
+.dato-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.dato-grid code { display: block; overflow-wrap: anywhere; }
+code { color: var(--acento); font-family: 'Share Tech Mono', monospace; font-size: 14px; background: rgba(0,0,0,0.3); padding: 4px; }
+
+.ultimo-valor { text-align: center; padding: 10px 0 22px; }
+.ultimo-valor strong { display: block; font-size: 96px; font-weight: 400; color: var(--acento); line-height: 1; }
+.ultimo-valor span { display: block; margin-top: 12px; font-size: 18px; }
+.ultimo-valor small { display: block; margin-top: 5px; color: var(--tenue); font-size: 14px; }
+
+.ultimo-json { padding-top: 16px; border-top: 1px solid var(--borde); }
+.ultimo-json pre { margin: 0; padding: 12px; overflow: auto; background: rgba(10, 18, 26, 0.7); color: var(--suave); font-size: 13px; line-height: 1.45; }
+
+.escena { height: 330px; border: 1px solid var(--borde); background: var(--fondo); margin-top: 14px; position: relative;}
+.escena canvas { display: block; width: 100%; height: 100%; outline: none; }
+.escena-gigante { height: 500px; }
+
+.metricas { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+.metricas div { padding: 12px; background: rgba(10, 18, 26, 0.7); border: 1px solid var(--borde); text-align: center;}
+.metricas span { display: block; color: var(--tenue); font-size: 11px; }
+.metricas strong { display: block; margin-top: 8px; font-size: 28px; font-weight: 400; color: var(--acento); }
+
+.nodos-cabecera, .nodo { display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 62px); gap: 8px; }
+.nodos-cabecera { padding: 0 11px 7px; color: var(--tenue); font-size: 11px; border-bottom: 1px solid var(--borde); margin-bottom: 8px;}
+.nodos-cabecera span:not(:first-child) { text-align: right; }
+.nodos-lista { display: grid; gap: 7px; }
+.nodo { padding: 10px 11px; background: rgba(10, 18, 26, 0.7); font-size: 14px; border: 1px solid transparent; transition: border-color 0.2s;}
+.nodo:hover { border-color: var(--borde); }
+.nodo span { color: var(--texto); }
+.nodo strong { text-align: right; color: var(--acento); }
+
+.nota { margin: 12px 0 0; color: var(--tenue); font-size: 13px; line-height: 1.45; }
+.vacio { margin: 0; color: var(--tenue); font-size: 14px; }
+footer { padding: 18px 2px 6px; color: var(--tenue); font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; text-align: center;}
+
+@media(max-width: 850px){
+  body { padding: 16px; }
+  .app { width: 100%; }
+  .workspace { grid-template-columns: 1fr; }
+  .panel { padding: 18px; }
+  .etapa-badge { position: static; margin-top: 12px; }
+  .dato-grid { grid-template-columns: 1fr !important; }
+  .metricas { grid-template-columns: 1fr 1fr; }
+  .nodos-cabecera, .nodo { grid-template-columns: minmax(0, 1fr) 50px 50px 50px; }
+  .ultimo-valor strong { font-size: 78px; }
+  .escena-gigante { height: 450px; }
+}

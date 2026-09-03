@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sistema Colectivo - Calidad Alimentaria</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<main class="app">
+  <header class="encabezado">
+    <p class="eyebrow">COMPUTACIÓN AVANZADA · MCD UAI</p>
+    <h1>Sistema Colectivo</h1>
+    <p class="bajada">Análisis automatizado de defectos en tejido de salmón (Melanina y Sangre).</p>
+    <div class="etapa-badge">ETAPA <strong id="etapa-actual">4</strong></div>
+  </header>
+
+  <!-- PANEL SUPERIOR: CONEXIÓN -->
+  <section class="panel" data-etapa="1">
+    <div class="panel-titulo"><span>01</span><h2>Identidad y conexión</h2></div>
+    <div class="dato-grid" style="grid-template-columns: 1fr 1fr 150px; align-items: end; margin-top:0;">
+      <label style="margin:0;"><span>Tu nombre</span><input id="nombre" type="text" placeholder="Ej: Laboratorio 1" autocomplete="name"></label>
+      <label style="margin:0;"><span>Contraseña MQTT</span><input id="contrasena" type="password" placeholder="Escribe la contraseña" autocomplete="off"></label>
+      <button id="boton-conectar" style="margin:0;">Conectar</button>
+    </div>
+    <div class="estado-conexion" style="margin-top: 15px;"><span id="estado-punto" class="estado-punto"></span><strong id="estado-texto">Desconectado</strong></div>
+    <div class="dato-grid">
+      <div><span>Client ID</span><code id="cliente-id">—</code></div>
+      <div><span>Suscripción</span><code id="topic-suscripcion">—</code></div>
+    </div>
+  </section>
+
+  <!-- ESPACIO DE TRABAJO A DOS COLUMNAS -->
+  <div class="workspace">
+    
+    <!-- COLUMNA IZQUIERDA: FOTO Y MENSAJES -->
+    <div class="workspace-izq">
+      <section class="panel" data-etapa="1">
+        <div class="panel-titulo"><span>02</span><h2>Escáner de Defectos</h2></div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <input type="file" id="upload-foto" accept="image/*" style="font-size: 0.8rem; background: #0f1012; color: var(--texto); border: 1px solid var(--borde); padding: 8px;">
+          <canvas id="canvas-frutilla" style="width: 100%; border-radius: 4px; background: #0a0a0b; min-height: 180px; border: 1px solid var(--borde);"></canvas>
+          <button id="boton-escanear" style="background: var(--error); border-color: var(--error); color: #fff;">Escanear Anomalías</button>
+        </div>
+        <div class="dato-grid" style="margin-top: 12px; grid-template-columns: 1fr;">
+          <div><span>Estado del escáner</span><code id="estado-fruto">Esperando imagen...</code></div>
+        </div>
+        <p class="nota">El algoritmo recorrerá la matriz de píxeles buscando colorimetrías asociadas a hematomas o melanina.</p>
+      </section>
+
+      <section class="panel panel-destacado" data-etapa="1">
+        <div class="panel-titulo"><span>03</span><h2>Última anomalía detectada</h2></div>
+        <div class="ultimo-valor" style="padding-bottom: 10px;">
+          <strong id="ultimo-intensidad" style="font-size: 64px;">—</strong>
+          <span id="ultimo-nombre" style="font-size: 14px;">Esperando red…</span>
+          <small id="ultimo-hora">—</small>
+        </div>
+        <div class="ultimo-json"><span>Payload recibido</span><pre id="ultimo-json" style="max-height: 100px;">{ }</pre></div>
+      </section>
+    </div>
+
+    <!-- COLUMNA DERECHA: GEOMETRÍA 3D -->
+    <div class="workspace-der">
+      <section class="panel" data-etapa="4">
+        <div class="panel-titulo"><span>04</span><h2>Mapa Topográfico de Contaminación</h2></div>
+        <div class="metricas">
+          <div><span>Voxels Detectados</span><strong id="m-nodos">0</strong></div>
+          <div><span>Caos Promedio</span><strong id="m-promedio">—</strong></div>
+          <div><span>Mínimo</span><strong id="m-minimo">—</strong></div>
+          <div><span>Máximo</span><strong id="m-maximo">—</strong></div>
+        </div>
+        <div id="escena-colectiva" class="escena escena-gigante"></div>
+      </section>
+    </div>
+
+  </div> <!-- /workspace -->
+
+  <!-- CONTROLES BASE OCULTOS (Necesarios para mantener compatibilidad con el JS) -->
+  <div style="display:none;">
+    <input id="intensidad" type="range"><output id="intensidad-salida">50</output>
+    <input id="intensidad-2" type="range"><output id="intensidad-salida-2">50</output>
+    <input id="actividad" type="range"><output id="actividad-salida">50</output>
+    <input id="variacion" type="range"><output id="variacion-salida">50</output>
+  </div>
+
+  <footer><p><strong>Idea central:</strong> visión computacional → detección de defectos (LaksData) → topografía de datos 3D.</p></footer>
+</main>
+
+<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}
+</script>
+<script type="module" src="./main.js"></script>
+</body>
+</html>

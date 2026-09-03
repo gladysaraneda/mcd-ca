@@ -248,17 +248,20 @@ function crearModuloLinea(centro) {
   grupo.userData.offsetAnim = Math.random() * Math.PI * 2;
   gruposModulosAnimados.push(grupo);
 
+  // --- LÓGICA INTELIGENTE DE CLIMA (NIEVE BLANCA DENSA VS LLUVIA CELESTE) ---
   const textoClima = centro.precipitacion.toLowerCase();
   const estaNevando = textoClima.includes("nieve") || textoClima.includes("nevando");
   const estaLloviendo = textoClima.includes("lluvia");
 
   if (esOptimo && parametros.mostrarNieve && estaNevando) {
-    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0x0284c7, 0.104, 22);
+    // Nieve: 100% blanca, 30% más grande y densa
+    const particulasNieve = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0xffffff, 0.104, 22);
     sistemasNieveLocal.push(particulasNieve);
     escena.add(particulasNieve);
   }
 
   if (parametros.mostrarLluvia && estaLloviendo) {
+    // Lluvia: celeste claro, tamaño original
     const particulasLluvia = crearParticulasClima(centro.x, centro.z, alturaCentro + 0.2, 0x0284c7, 0.07, 10, true);
     sistemasLluviaLocal.push(particulasLluvia);
     escena.add(particulasLluvia);
